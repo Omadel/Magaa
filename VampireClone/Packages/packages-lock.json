@@ -5,7 +5,17 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "dfd2b3db31f0397c6117964bb30919db6d7db11a"
+      "hash": "0140feabaa7ac987ac40f80be3b86b0a3428e2a6"
+    },
+    "com.unity.animation.rigging": {
+      "version": "1.1.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.burst": "1.4.1",
+        "com.unity.test-framework": "1.1.24"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.burst": {
       "version": "1.6.5",

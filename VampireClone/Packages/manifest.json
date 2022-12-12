@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.etienne": "https://github.com/Omadel/Etienne.git",
+    "com.unity.animation.rigging": "1.1.1",
     "com.unity.cinemachine": "2.9.4",
     "com.unity.ide.visualstudio": "2.0.17",
     "com.unity.inputsystem": "1.4.4",
