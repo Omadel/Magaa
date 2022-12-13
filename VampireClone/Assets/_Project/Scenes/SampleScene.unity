@@ -1893,7 +1893,7 @@ MonoBehaviour:
   UNIT: {fileID: 1041439251}
   walkSpeed: 2
   health: 100
-  shootCooldown: 0.1
+  shootCooldown: 0.7
   damage: 10
   moveBufferDelay: 0.3
   recoil: 0.4
@@ -1902,6 +1902,8 @@ MonoBehaviour:
   durationFX: 3
   bullet: {fileID: 1970155421}
   bulletSpeed: 50
+  bloodSplat: {fileID: 198615267133080452, guid: ed67c2cb8e3a7fb418c6fbb1b001dce2,
+    type: 3}
   animator: {fileID: 95485628020157479}
   forward: {x: 0.7071067, y: 0, z: 0.7071068}
   right: {x: 0.7071068, y: 0, z: -0.7071067}
