@@ -30,8 +30,8 @@ namespace ProPixelizer
         public static void ReimportShaders()
         {
 #if UNITY_EDITOR
-            AssetDatabase.ImportAsset("Assets/Plugins/ProPixelizer/ShaderGraph/ProPixelizerBase.shadergraph", ImportAssetOptions.ForceUpdate);
-            AssetDatabase.ImportAsset("Assets/Plugins/ProPixelizer/SRP/PixelizedWithOutline.shader", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/ProPixelizer/ShaderGraph/ProPixelizerBase.shadergraph", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/ProPixelizer/SRP/PixelizedWithOutline.shader", ImportAssetOptions.ForceUpdate);
 #endif
         }
 

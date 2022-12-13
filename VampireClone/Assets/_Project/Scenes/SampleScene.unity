@@ -3540,8 +3540,8 @@ MonoBehaviour:
   shootIK: {fileID: 505389730}
   shootFX: {fileID: 1297163586069706402}
   durationFX: 3
-  bullet: {fileID: 0}
-  bulletSpeed: 0
+  bullet: {fileID: 1970155421}
+  bulletSpeed: 5
   animator: {fileID: 95485628020157479}
   forward: {x: 0.7071067, y: 0, z: 0.7071068}
   right: {x: 0.7071068, y: 0, z: -0.7071067}
