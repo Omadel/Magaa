@@ -15,19 +15,22 @@ namespace VampireClone
         public int Health => health;
         public int Damage => damage;
 
+        public Unit UNIT;
 
         [Header("Player")]
         [SerializeField] private float walkSpeed = 5f;
         [SerializeField] private int health = 100;
         [SerializeField] private float shootCooldown = 1f;
         [SerializeField] private int damage = 10;
+        [SerializeField] private float moveBufferDelay = .3f;
         [Header("Shoot")]
         [SerializeField, Range(0, 1)] private float recoil = .4f;
         [SerializeField] private Rig shootIK;
         [SerializeField] private ParticleSystem shootFX;
-        [SerializeField] float durationFX = 3f;
-        [SerializeField] Bullet bullet;
-        [SerializeField] float bulletSpeed;
+        [SerializeField] private float durationFX = 3f;
+        [SerializeField] private Bullet bullet;
+        [SerializeField] private float bulletSpeed;
+        [SerializeField] ParticleSystem bloodSplat;
 
         [Header("Cached fields")]
         [SerializeField, Etienne.ReadOnly] private Animator animator;
@@ -37,10 +40,9 @@ namespace VampireClone
         private Vector2 inputDirection;
         private new Camera camera;
         private Timer shootTimer;
-        private Tween shootTween;
+        private Sequence shootSequence;
         private Queue<ParticleSystem> shootFXQueue = new Queue<ParticleSystem>();
         private Queue<Bullet> bulletQueue = new Queue<Bullet>();
-
 
         private void Reset()
         {
@@ -66,6 +68,7 @@ namespace VampireClone
             Gizmos.DrawLine(transform.position, transform.position + forward);
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, transform.position + right);
+
             Gizmos.color = Color.white;
         }
 
@@ -77,30 +80,61 @@ namespace VampireClone
             shootFX.gameObject.SetActive(false);
 
             shootFXQueue.Enqueue(shootFX);
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 100; i++)
             {
                 ParticleSystem fx = Instantiate(shootFX, shootFX.transform.parent);
                 shootFXQueue.Enqueue(fx);
-                fx.hideFlags = HideFlags.HideAndDontSave;
+                fx.gameObject.hideFlags = HideFlags.HideInHierarchy;
             }
 
-            for (int i = 0; i < 300; i++)
+            bullet.gameObject.SetActive(false);
+            bulletQueue.Enqueue(bullet);
+            for (int i = 0; i < 100; i++)
             {
-                var bullet = Instantiate(this.bullet, this.bullet.transform.parent);
+                Bullet bullet = Instantiate(this.bullet, this.bullet.transform.parent);
                 bulletQueue.Enqueue(bullet);
-                //bullet.hideFlags = HideFlags.HideAndDontSave;
+                bullet.gameObject.hideFlags = HideFlags.HideInHierarchy;
             }
         }
 
         private void Shoot()
         {
-            Debug.Log("Shooit");
+            Bullet bullet = bulletQueue.Dequeue();
+            bullet.Shoot(Aim(bullet), bulletSpeed);
             shootTimer.Restart();
-            shootTween?.Complete();
-            shootTween = DOTween.To(() => shootIK.weight, v => shootIK.weight = Mathf.RoundToInt(v * 4) / 4f, recoil, .4f)
-                .SetLoops(2, LoopType.Yoyo)
-                .SetEase(Ease.InFlash);
+            shootSequence?.Complete();
+            shootSequence = DOTween.Sequence();
+            shootSequence.Append(DOTween.To(() => shootIK.weight, v => shootIK.weight = Mathf.RoundToInt(v * 4) / 4f, recoil, .4f)).SetEase(Ease.OutExpo);
+            shootSequence.Append(DOTween.To(() => shootIK.weight, v => shootIK.weight = Mathf.RoundToInt(v * 4) / 4f, 0f, .4f));
+
             StartCoroutine(ShootFX());
+        }
+
+        private Vector3 Aim(Bullet bullet)
+        {
+            List<Unit> units = UnitManager.Instance.Units;
+            Vector3 position = bullet.transform.position;
+            Vector3 direction;
+            Vector3 forward = transform.forward;
+            for (int i = 0; i < units.Count; i++)
+            {
+                Vector3 targetPosition = units[i].transform.position;
+                targetPosition.y = position.y;
+                direction = position.Direction(targetPosition).normalized;
+                float dot = Vector3.Dot(forward, direction);
+                if (dot >= .9f) return direction;
+            }
+            direction = transform.forward;
+            return direction;
+        }
+
+        public void EnqueueBullet(Bullet bullet, bool collide = false)
+        {
+            bullet.gameObject.SetActive(false);
+            bulletQueue.Enqueue(bullet);
+            if (!collide) return;
+            //todo  Blood Pool
+            GameObject.Instantiate(bloodSplat, bullet.transform.position, bullet.transform.rotation);
         }
 
         private IEnumerator ShootFX()
@@ -115,16 +149,18 @@ namespace VampireClone
         private void OnMove(InputValue input)
         {
             inputDirection = input.Get<Vector2>();
-            //todo add Buffer
+
             animator.SetBool("Walking", inputDirection.sqrMagnitude > .1f);
+            if (inputDirection.sqrMagnitude <= .1f) return;
+            Vector3 direction = (forward * inputDirection.y + right * inputDirection.x).normalized;
+            transform.forward = direction;
+
         }
 
         private void Update()
         {
             Vector3 direction = (forward * inputDirection.y + right * inputDirection.x).normalized;
             transform.position += Time.deltaTime * walkSpeed * direction;
-            if (direction != Vector3.zero) transform.forward = direction;
-
         }
 
         public void Hit(int value)

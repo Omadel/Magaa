@@ -46,6 +46,7 @@ namespace VampireClone
         {
             agent.speed = walkSpeed;
             animator.SetFloat("Walking Posture", Random.value);
+            animator.CrossFadeInFixedTime("Walk", 0, 0, Random.value * animator.runtimeAnimatorController.animationClips[1].length);
 
             while (enabled)
             {
@@ -88,6 +89,8 @@ namespace VampireClone
         public void Die()
         {
             Debug.Log("DIE");
+            gameObject.SetActive(false);
+            UnitManager.Instance.Units.Remove(this);
         }
 
         public void Attack()
