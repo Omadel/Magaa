@@ -1,4 +1,4 @@
-using DG.Tweening;
+﻿using DG.Tweening;
 using Etienne;
 using System;
 using System.Collections;
@@ -24,8 +24,6 @@ namespace VampireClone
         [SerializeField] private int damage = 10;
         [SerializeField] private float moveBufferDelay = .3f;
         [Header("Shoot")]
-        [SerializeField, Range(0, 1)] private float recoil = .4f;
-        [SerializeField] private Rig shootIK;
         [SerializeField] private ParticleSystem shootFX;
         [SerializeField] private float durationFX = 3f;
         [SerializeField] private Bullet bullet;
@@ -102,11 +100,7 @@ namespace VampireClone
             Bullet bullet = bulletQueue.Dequeue();
             bullet.Shoot(Aim(bullet), bulletSpeed);
             shootTimer.Restart();
-            shootSequence?.Complete();
-            shootSequence = DOTween.Sequence();
-            shootSequence.Append(DOTween.To(() => shootIK.weight, v => shootIK.weight = Mathf.RoundToInt(v * 4) / 4f, recoil, .4f)).SetEase(Ease.OutExpo);
-            shootSequence.Append(DOTween.To(() => shootIK.weight, v => shootIK.weight = Mathf.RoundToInt(v * 4) / 4f, 0f, .4f));
-
+	        animator.SetTrigger("Shoot");
             StartCoroutine(ShootFX());
         }
 
@@ -140,10 +134,13 @@ namespace VampireClone
         private IEnumerator ShootFX()
         {
             ParticleSystem fx = shootFXQueue.Dequeue();
-            fx.gameObject.SetActive(true);
+	        var parent = fx.transform.parent;
+	        fx.gameObject.SetActive(true);
+	        fx.transform.SetParent(null);	
             yield return new WaitForSeconds(durationFX);
             fx.gameObject.SetActive(false);
             shootFXQueue.Enqueue(fx);
+	        fx.transform.SetParent(parent);
         }
 
         private void OnMove(InputValue input)
