@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "0140feabaa7ac987ac40f80be3b86b0a3428e2a6"
+      "hash": "0a636caed4dd08386d6b9a2bff562affdc47a32f"
     },
     "com.unity.animation.rigging": {
       "version": "1.1.1",
