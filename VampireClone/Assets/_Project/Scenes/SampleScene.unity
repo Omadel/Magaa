@@ -16986,11 +16986,12 @@ MonoBehaviour:
   shootCooldown: 0.7
   damage: 10
   moveBufferDelay: 0.3
-  shootFX: {fileID: 1297163586069706402}
+  shootFXPrefab: {fileID: 1297163586069706402}
+  shootFXTransform: {fileID: 4849140730842177}
   durationFX: 3
-  bullet: {fileID: 1970155421}
+  bulletPrefab: {fileID: 1970155421}
   bulletSpeed: 50
-  bloodSplat: {fileID: 198615267133080452, guid: ed67c2cb8e3a7fb418c6fbb1b001dce2,
+  bloodFXPrefab: {fileID: 198104090543139058, guid: 4430919f14c50f84085d287cbcb2c30e,
     type: 3}
   animator: {fileID: 95485628020157479}
   forward: {x: 0.7071067, y: 0, z: 0.7071068}

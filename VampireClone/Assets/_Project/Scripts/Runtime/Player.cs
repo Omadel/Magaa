@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using Etienne;
+using Etienne.Pools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,8 +43,6 @@ namespace VampireClone
         private Sequence shootSequence;
         private ComponentPool<ParticleSystem> bloodFXPool, shootFXPool;
         private ComponentPool<Bullet> bulletQueue;
-        private Queue<ParticleSystem> shootFXQueue = new Queue<ParticleSystem>();
-        private Queue<Bullet> bulletQueue = new Queue<Bullet>();
         private Joystick joystick;
 
         private void Reset()
