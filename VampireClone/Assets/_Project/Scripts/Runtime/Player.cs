@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using Etienne;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,7 @@ using UnityEngine.InputSystem;
 namespace VampireClone
 {
     [DefaultExecutionOrder(-1)]
-    public class Player : Etienne.Singleton<Player>, IDamageable, IAttacker
+    public class Player : Singleton<Player>, IDamageable, IAttacker
     {
         public int Health => health;
         public int Damage => damage;
@@ -23,29 +24,38 @@ namespace VampireClone
         [SerializeField] private int damage = 10;
         [SerializeField] private float moveBufferDelay = .3f;
         [Header("Shoot")]
-        [SerializeField] private ParticleSystem shootFX;
+        [SerializeField] private ParticleSystem shootFXPrefab;
+        [SerializeField] private Transform shootFXTransform;
         [SerializeField] private float durationFX = 3f;
-        [SerializeField] private Bullet bullet;
+        [SerializeField] private Bullet bulletPrefab;
         [SerializeField] private float bulletSpeed;
-        [SerializeField] private ParticleSystem bloodSplat;
+        [SerializeField] private ParticleSystem bloodFXPrefab;
 
         [Header("Cached fields")]
-        [SerializeField, Etienne.ReadOnly] private Animator animator;
-        [SerializeField, Etienne.ReadOnly] private Vector3 forward;
-        [SerializeField, Etienne.ReadOnly] private Vector3 right;
+        [SerializeField, ReadOnly] private Animator animator;
+        [SerializeField, ReadOnly] private Vector3 forward;
+        [SerializeField, ReadOnly] private Vector3 right;
 
         private Vector2 inputDirection;
         private new Camera camera;
         private Timer shootTimer;
         private Sequence shootSequence;
+        private ComponentPool<ParticleSystem> bloodFXPool, shootFXPool;
+        private ComponentPool<Bullet> bulletQueue;
         private Queue<ParticleSystem> shootFXQueue = new Queue<ParticleSystem>();
         private Queue<Bullet> bulletQueue = new Queue<Bullet>();
         private Joystick joystick;
 
         private void Reset()
         {
-            animator = GetComponentInChildren<Animator>();
+            CacheAnimator();
             CalculateDirectionVectors();
+        }
+
+        private void OnValidate()
+        {
+            shootTimer?.SetDuration(shootCooldown);
+            shootTimer?.Restart();
         }
 
         [ContextMenu(nameof(CalculateDirectionVectors))]
@@ -59,6 +69,8 @@ namespace VampireClone
             forward = camRotationFlatted * Vector3.forward;
             right = Vector3.Cross(Vector3.up, forward);
         }
+
+        [ContextMenu(nameof(CacheAnimator))] private void CacheAnimator() => animator = GetComponentInChildren<Animator>();
 
         private void OnDrawGizmosSelected()
         {
@@ -75,33 +87,25 @@ namespace VampireClone
             camera = Camera.main;
             shootTimer = Timer.Create(shootCooldown, false).OnComplete(Shoot);
             shootTimer.Restart();
-            shootFX.gameObject.SetActive(false);
 
-            shootFXQueue.Enqueue(shootFX);
-            for (int i = 0; i < 100; i++)
-            {
-                ParticleSystem fx = Instantiate(shootFX, shootFX.transform.parent);
-                shootFXQueue.Enqueue(fx);
-                fx.gameObject.hideFlags = HideFlags.HideInHierarchy;
-            }
+            shootFXPrefab.gameObject.SetActive(false);
+            bulletPrefab.gameObject.SetActive(false);
 
-            bullet.gameObject.SetActive(false);
-            bulletQueue.Enqueue(bullet);
-            for (int i = 0; i < 100; i++)
-            {
-                Bullet bullet = Instantiate(this.bullet, this.bullet.transform.parent);
-                bulletQueue.Enqueue(bullet);
-                bullet.gameObject.hideFlags = HideFlags.HideInHierarchy;
-            }
+            bloodFXPool = new ComponentPool<ParticleSystem>(25, bloodFXPrefab, "Blood FX", HideFlags.None, false);
+            shootFXPool = new ComponentPool<ParticleSystem>(25, shootFXPrefab, "Shoot FX", HideFlags.None, false);
+            bulletQueue = new ComponentPool<Bullet>(25, bulletPrefab, "Bullet", HideFlags.None, false);
         }
 
         private void Shoot()
         {
+            Debug.Log("SHOOT");
             Bullet bullet = bulletQueue.Dequeue();
+            bullet.transform.SetPositionAndRotation(bulletPrefab.transform.position, bulletPrefab.transform.rotation);
             bullet.Shoot(Aim(bullet), bulletSpeed);
             shootTimer.Restart();
             animator.SetTrigger("Shoot");
-            StartCoroutine(ShootFX());
+            ParticleSystem shootFX = shootFXPool.Dequeue(durationFX);
+            shootFX.transform.SetPositionAndRotation(shootFXTransform.position, shootFXTransform.rotation);
         }
 
         private Vector3 Aim(Bullet bullet)
@@ -127,20 +131,9 @@ namespace VampireClone
             bullet.gameObject.SetActive(false);
             bulletQueue.Enqueue(bullet);
             if (!collide) return;
-            //todo  Blood Pool
-            GameObject.Instantiate(bloodSplat, bullet.transform.position, bullet.transform.rotation);
-        }
 
-        private IEnumerator ShootFX()
-        {
-            ParticleSystem fx = shootFXQueue.Dequeue();
-            Transform parent = fx.transform.parent;
-            fx.gameObject.SetActive(true);
-            fx.transform.SetParent(null);
-            yield return new WaitForSeconds(durationFX);
-            fx.gameObject.SetActive(false);
-            shootFXQueue.Enqueue(fx);
-            fx.transform.SetParent(parent);
+            ParticleSystem bloodFX = bloodFXPool.Dequeue(bloodFXPrefab.main.duration * 1.1f);
+            bloodFX.transform.SetPositionAndRotation(bullet.transform.position, bullet.transform.rotation);
         }
 
         private void OnMove(InputValue input) => SetDirection(input.Get<Vector2>());

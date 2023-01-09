@@ -18,8 +18,6 @@ namespace VampireClone
             Reset();
             rigidbody.velocity = zero;
             rigidbody.angularVelocity = zero;
-            transform.SetParent(null);
-            gameObject.SetActive(true);
             speed = bulletSpeed;
             transform.forward = forward;
         }
@@ -27,16 +25,6 @@ namespace VampireClone
         private void Reset()
         {
             trailRenderer.Clear();
-            if (transform.parent != null)
-            {
-                parent = transform.parent;
-                position = transform.localPosition;
-            }
-            else
-            {
-                transform.SetParent(parent);
-                transform.localPosition = position;
-            }
         }
 
         private void FixedUpdate()
