@@ -1,10 +1,8 @@
 ﻿using DG.Tweening;
 using Etienne;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 
 namespace VampireClone
@@ -15,6 +13,7 @@ namespace VampireClone
         public int Health => health;
         public int Damage => damage;
 
+        [Header("TEMPORARY")]
         public Unit UNIT;
 
         [Header("Player")]
@@ -28,7 +27,7 @@ namespace VampireClone
         [SerializeField] private float durationFX = 3f;
         [SerializeField] private Bullet bullet;
         [SerializeField] private float bulletSpeed;
-        [SerializeField] ParticleSystem bloodSplat;
+        [SerializeField] private ParticleSystem bloodSplat;
 
         [Header("Cached fields")]
         [SerializeField, Etienne.ReadOnly] private Animator animator;
@@ -41,6 +40,7 @@ namespace VampireClone
         private Sequence shootSequence;
         private Queue<ParticleSystem> shootFXQueue = new Queue<ParticleSystem>();
         private Queue<Bullet> bulletQueue = new Queue<Bullet>();
+        private Joystick joystick;
 
         private void Reset()
         {
@@ -100,7 +100,7 @@ namespace VampireClone
             Bullet bullet = bulletQueue.Dequeue();
             bullet.Shoot(Aim(bullet), bulletSpeed);
             shootTimer.Restart();
-	        animator.SetTrigger("Shoot");
+            animator.SetTrigger("Shoot");
             StartCoroutine(ShootFX());
         }
 
@@ -134,29 +134,33 @@ namespace VampireClone
         private IEnumerator ShootFX()
         {
             ParticleSystem fx = shootFXQueue.Dequeue();
-	        var parent = fx.transform.parent;
-	        fx.gameObject.SetActive(true);
-	        fx.transform.SetParent(null);	
+            Transform parent = fx.transform.parent;
+            fx.gameObject.SetActive(true);
+            fx.transform.SetParent(null);
             yield return new WaitForSeconds(durationFX);
             fx.gameObject.SetActive(false);
             shootFXQueue.Enqueue(fx);
-	        fx.transform.SetParent(parent);
+            fx.transform.SetParent(parent);
         }
 
-        private void OnMove(InputValue input)
+        private void OnMove(InputValue input) => SetDirection(input.Get<Vector2>());
+
+        public void SetDirection(Vector2 direction)
         {
-            inputDirection = input.Get<Vector2>();
+            inputDirection = direction;
 
-            animator.SetBool("Walking", inputDirection.sqrMagnitude > .1f);
-            if (inputDirection.sqrMagnitude <= .1f) return;
-            Vector3 direction = (forward * inputDirection.y + right * inputDirection.x).normalized;
-            transform.forward = direction;
-
+            animator.SetBool("Walking", direction.sqrMagnitude > .1f);
+            if (direction.sqrMagnitude <= .1f) return;
+            transform.forward = ((forward * direction.y) + (right * direction.x)).normalized;
         }
+
+        public void SetJoystick(Joystick joystick) => this.joystick = joystick;
+        private void OnTouchPress(InputValue input) => joystick.Press(input);
+        private void OnTouchPosition(InputValue input) => joystick.ChangePosition(input.Get<Vector2>());
 
         private void Update()
         {
-            Vector3 direction = (forward * inputDirection.y + right * inputDirection.x).normalized;
+            Vector3 direction = ((forward * inputDirection.y) + (right * inputDirection.x)).normalized;
             transform.position += Time.deltaTime * walkSpeed * direction;
         }
 
