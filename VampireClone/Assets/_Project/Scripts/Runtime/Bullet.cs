@@ -4,12 +4,9 @@ namespace VampireClone
 {
     public class Bullet : MonoBehaviour
     {
-        [SerializeField] private int flatRatio = 20;
         [SerializeField] private TrailRenderer trailRenderer;
         [SerializeField] private new Rigidbody rigidbody;
         private float speed;
-        private Vector3 position;
-        private Transform parent;
         private Vector3 zero = Vector3.zero;
 
 

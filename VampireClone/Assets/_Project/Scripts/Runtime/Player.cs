@@ -1,5 +1,4 @@
-﻿using DG.Tweening;
-using Etienne;
+﻿using Etienne;
 using Etienne.Pools;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,15 +11,11 @@ namespace VampireClone
         public int Health => health;
         public int Damage => damage;
 
-        [Header("TEMPORARY")]
-        public Unit UNIT;
-
         [Header("Player")]
         [SerializeField] private float walkSpeed = 5f;
         [SerializeField] private int health = 100;
-        [SerializeField] private float shootCooldown = 1f;
+        [SerializeField] private float shootingSpeed = 1f;
         [SerializeField] private int damage = 10;
-        [SerializeField] private float moveBufferDelay = .3f;
         [Header("Shoot")]
         [SerializeField] private ParticleSystem shootFXPrefab;
         [SerializeField] private Transform shootFXTransform;
@@ -29,6 +24,8 @@ namespace VampireClone
         [SerializeField] private float bulletSpeed;
         [SerializeField] private float maxAimAngle = 40f;
         [SerializeField] private ParticleSystem bloodFXPrefab;
+        [SerializeField] private AnimationClip shootingClip;
+        [SerializeField] private int angleSteps = 45;
 
         [Header("Cached fields")]
         [SerializeField, ReadOnly] private Animator animator;
@@ -38,11 +35,11 @@ namespace VampireClone
         private Vector2 inputDirection;
         private new Camera camera;
         private Timer shootTimer;
-        private Sequence shootSequence;
         private ComponentPool<ParticleSystem> bloodFXPool, shootFXPool;
         private ComponentPool<Bullet> bulletQueue;
         private Joystick joystick;
 
+        #region Editor
         private void Reset()
         {
             CacheAnimator();
@@ -51,8 +48,10 @@ namespace VampireClone
 
         private void OnValidate()
         {
-            shootTimer?.SetDuration(shootCooldown);
+            if (!Application.isPlaying) return;
+            shootTimer?.SetDuration(1 / shootingSpeed);
             shootTimer?.Restart();
+            animator.SetFloat("ShootingSpeed", Mathf.Max(1f, shootingSpeed / shootingClip.length));
         }
 
         [ContextMenu(nameof(CalculateDirectionVectors))]
@@ -77,11 +76,12 @@ namespace VampireClone
             Gizmos.DrawLine(transform.position, transform.position + right);
             Gizmos.color = Color.white;
         }
+        #endregion
 
         private void Start()
         {
             camera = Camera.main;
-            shootTimer = Timer.Create(shootCooldown, false).OnComplete(Shoot);
+            shootTimer = Timer.Create(1 / shootingSpeed, false).OnComplete(Shoot);
             shootTimer.Restart();
 
             shootFXPrefab.gameObject.SetActive(false);
@@ -90,16 +90,19 @@ namespace VampireClone
             bloodFXPool = new ComponentPool<ParticleSystem>(25, bloodFXPrefab, "Blood FX", HideFlags.None, false);
             shootFXPool = new ComponentPool<ParticleSystem>(25, shootFXPrefab, "Shoot FX", HideFlags.None, false);
             bulletQueue = new ComponentPool<Bullet>(25, bulletPrefab, "Bullet", HideFlags.None, false);
+
+            animator.SetFloat("ShootingSpeed", Mathf.Max(1f, shootingSpeed / shootingClip.length));
         }
 
         private void Shoot()
         {
-            Debug.Log("SHOOT");
             Bullet bullet = bulletQueue.Dequeue();
             bullet.transform.SetPositionAndRotation(bulletPrefab.transform.position, bulletPrefab.transform.rotation);
             bullet.Shoot(GetDirectionToClosestUnitInAngle(bullet), bulletSpeed);
+
             shootTimer.Restart();
-            animator.SetTrigger("Shoot");
+            animator.Play("Shoot", 1);
+
             ParticleSystem shootFX = shootFXPool.Dequeue(durationFX);
             shootFX.transform.SetPositionAndRotation(shootFXTransform.position, shootFXTransform.rotation);
         }
@@ -143,21 +146,20 @@ namespace VampireClone
         }
 
         private void OnMove(InputValue input) => SetDirection(input.Get<Vector2>());
-        public int angleSteps = 45;
+
         public void SetDirection(Vector2 direction)
         {
             inputDirection = direction;
 
-            animator.SetBool("Walking", direction.sqrMagnitude > .1f);
-            if (direction.sqrMagnitude <= .1f) return;
-            //transform.forward = ((forward * direction.y) + (right * direction.x)).normalized;
+            bool isMoving = direction.sqrMagnitude > .1f;
+            animator.Play(isMoving ? "Walk" : "Idle", 0);
+            if (!isMoving) return;
 
             Vector3 targetDirection = (forward * direction.y) + (right * direction.x);
             targetDirection.Normalize();
             float angle = Vector3.SignedAngle(forward, targetDirection, Vector3.up);
             // Round the angle to the nearest multiple of angleSteps
             int roundedAngle = Mathf.RoundToInt(angle / angleSteps) * angleSteps;
-            Debug.Log(roundedAngle);
             // Use Quaternion to rotate the object by the rounded angle
             transform.forward = Quaternion.Euler(0, roundedAngle, 0) * forward;
         }
@@ -168,8 +170,6 @@ namespace VampireClone
 
         private void Update()
         {
-            //Vector3 direction = ((forward * inputDirection.y) + (right * inputDirection.x)).normalized;
-            Debug.Log(inputDirection.magnitude);
             transform.position += Time.deltaTime * walkSpeed * transform.forward * inputDirection.magnitude;
         }
 

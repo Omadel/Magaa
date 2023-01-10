@@ -28,11 +28,10 @@ namespace VampireClone
 
         private void SetRenderScale(float renderScale)
         {
-            Debug.Log($"Set Render to {renderScale}");
             // Get the URP asset from the active render pipeline
-            UniversalRenderPipelineAsset pipeline = UniversalRenderPipeline.asset;
+            UniversalRenderPipelineAsset renderPipelineAsset = UniversalRenderPipeline.asset;
             // Change the render scale
-            pipeline.renderScale = renderScale;
+            renderPipelineAsset.renderScale = renderScale;
         }
 
         private float GetRenderScaleRatio(Vector2Int resolution)
@@ -61,11 +60,21 @@ namespace VampireClone
 
         private void Reset()
         {
-            camera = GetComponent<Camera>();
-            UniversalAdditionalCameraData datas = camera.GetUniversalAdditionalCameraData();
+            UniversalAdditionalCameraData datas = GetComponent<Camera>().GetUniversalAdditionalCameraData();
+            // Remove anti aliasing from the camera
             datas.antialiasing = AntialiasingMode.None;
+            // Get the URP asset from the active render pipeline
+            UniversalRenderPipelineAsset renderPipelineAsset = UniversalRenderPipeline.asset;
+            // Remove anti aliasing from the render asset
+            renderPipelineAsset.msaaSampleCount = 1;
+            // Set the upsaling filter to point
+            renderPipelineAsset.upscalingFilter = UpscalingFilterSelection.Point;
+            // Set the render scale
+            SetRenderScale(pixelSize * GetRenderScaleRatio(GetEditorGameViewResolution()));
         }
+
     }
+
     public static class Vector2Extentions
     {
         public static Vector2Int ToVectior2Int(this Resolution resolution) => new Vector2Int(resolution.width, resolution.height);

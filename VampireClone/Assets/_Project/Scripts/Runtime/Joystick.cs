@@ -34,11 +34,12 @@ namespace VampireClone
             // Scale the direction by half the size of the rectTransform
             direction *= (rectTransform.rect.size * .5f);
             // Calculate the clamped position
-            Vector2 clampedPosition = ClampPositionWithinBounds(transform.position + direction);
+            //Vector2 clampedPosition = ClampPositionWithinBounds(transform.position + direction);
+            Vector2 clampedPosition = transform.position + direction;
             // Update the touchDelta's position
             touchDelta.transform.position = clampedPosition;
             // Set the direction for the player
-            Player.Instance.SetDirection(direction);
+            Player.Instance.SetDirection(direction.normalized);
         }
 
         private Vector2 ClampPositionWithinBounds(Vector2 position)
