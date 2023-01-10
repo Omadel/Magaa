@@ -10,6 +10,7 @@ namespace VampireClone
     {
         public int Health => health;
         public int Damage => damage;
+        public int AngleSteps => angleSteps;
 
         [Header("Player")]
         [SerializeField] private float walkSpeed = 5f;
@@ -33,7 +34,7 @@ namespace VampireClone
         [SerializeField, ReadOnly] private Vector3 right;
 
         private Vector2 inputDirection;
-        private new Camera camera;
+        private Camera camera;
         private Timer shootTimer;
         private ComponentPool<ParticleSystem> bloodFXPool, shootFXPool;
         private ComponentPool<Bullet> bulletQueue;

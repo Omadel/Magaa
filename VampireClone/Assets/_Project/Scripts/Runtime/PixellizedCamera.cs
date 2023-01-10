@@ -8,7 +8,7 @@ namespace VampireClone
     public class PixellizedCamera : MonoBehaviour
     {
         [SerializeField, Tooltip("Render Scale at 1080p")] private float pixelSize = .3f;
-        private new Camera camera;
+        private Camera camera;
         private readonly Vector2Int defaultResolution = new Vector2Int(1920, 1080);
         private Vector2Int currentResolution;
 

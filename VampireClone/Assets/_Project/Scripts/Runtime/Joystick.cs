@@ -39,22 +39,26 @@ namespace VampireClone
 
             // Calculate direction from touch position to the transform's position
             Vector3 touchDirection = (position - (Vector2)transform.position).normalized;
-            // Scale the direction by half the size of the rectTransform
-            Vector2 scaledDirection = touchDirection * rectTransform.rect.size * .5f; ;
+            // Set the direction on the Player instance
+            Player.Instance.SetDirection(touchDirection.normalized);
+
             // Clamp the touch position to the min/max bounds of the rectTransform
             Vector2 clampedPosition = ClampToCircle(position, transform.position, rectTransform.rect.size.x * .5f);
             // Set the position of the touchDelta object
             touchPosition.transform.position = clampedPosition;
-
-            // Set the direction on the Player instance
-            Player.Instance.SetDirection(scaledDirection.normalized);
         }
 
         private Vector3 ClampToCircle(Vector3 position, Vector3 center, float radius)
         {
             Vector3 direction = position - center;
-            bool isInsideTheCircle = direction.magnitude <= radius;
-            return isInsideTheCircle ? position : center + (direction.normalized * radius);
+            float magnitude = direction.magnitude;
+            bool isInsideTheCircle = magnitude <= radius;
+            float angle = Vector3.SignedAngle(Vector3.up, direction, Vector3.forward);
+            // Round the angle to the nearest multiple of angleSteps
+            int roundedAngle = Mathf.RoundToInt(angle / Player.Instance.AngleSteps) * Player.Instance.AngleSteps;
+            // Use Quaternion to rotate the object by the rounded angle
+            direction = Quaternion.Euler(0, 0, roundedAngle) * Vector3.up;
+            return center + (direction.normalized * (isInsideTheCircle ? magnitude : radius));
         }
 
         private bool TryEnablejoystick(Vector2 position)
