@@ -1,4 +1,3 @@
-using Etienne;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,6 +12,7 @@ namespace VampireClone
         private bool shouldUpdateJoystick;
         private RectTransform rectTransform;
         private CanvasGroup canvasGroup;
+        private List<RaycastResult> raycastResults = new List<RaycastResult>();
 
         private void Awake()
         {
@@ -29,28 +29,38 @@ namespace VampireClone
 
         private void UpdateTouchDelta(Vector2 position)
         {
-            Debug.Log("Touch delta");
-            Vector3 direction = transform.position.Direction(position).normalized.Multiply((Vector3)rectTransform.rect.size * .5f);
-            Vector2 normalizedPosition = transform.position + direction;
-            Vector2 invertedNormalizedPosition = transform.position - direction;
-            Vector2 min = new Vector2(Mathf.Min(invertedNormalizedPosition.x, normalizedPosition.x),
-                Mathf.Min(invertedNormalizedPosition.y, normalizedPosition.y));
-            Vector2 max = new Vector2(Mathf.Max(invertedNormalizedPosition.x, normalizedPosition.x),
-                Mathf.Max(invertedNormalizedPosition.y, normalizedPosition.y));
-            position.x = Mathf.Clamp(position.x, min.x, max.x);
-            position.y = Mathf.Clamp(position.y, min.y, max.y);
-            touchDelta.transform.position = position;
-
+            // Calculate the direction from the transform's position to the touch position
+            Vector3 direction = (position - (Vector2)transform.position).normalized;
+            // Scale the direction by half the size of the rectTransform
+            direction *= (rectTransform.rect.size * .5f);
+            // Calculate the clamped position
+            Vector2 clampedPosition = ClampPositionWithinBounds(transform.position + direction);
+            // Update the touchDelta's position
+            touchDelta.transform.position = clampedPosition;
+            // Set the direction for the player
             Player.Instance.SetDirection(direction);
+        }
+
+        private Vector2 ClampPositionWithinBounds(Vector2 position)
+        {
+            Vector2 min = (Vector2)transform.position - rectTransform.rect.size * .5f;
+            Vector2 max = (Vector2)transform.position + rectTransform.rect.size * .5f;
+            return new Vector2(Mathf.Clamp(position.x, min.x, max.x),
+                               Mathf.Clamp(position.y, min.y, max.y));
         }
 
         private void UpdateJoystick(Vector2 position)
         {
+            if (EventSystem.current == null)
+            {
+                Debug.LogError("EventSystem.current is null");
+                return;
+            }
             PointerEventData eventData = new PointerEventData(EventSystem.current) { position = position };
-            List<RaycastResult> raycsastResults = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, raycsastResults);
-            Debug.Log(raycsastResults.Count);
-            if (raycsastResults.Count > 0) return;
+            raycastResults.Clear();
+            EventSystem.current.RaycastAll(eventData, raycastResults);
+            bool blockingUIObjectHit = raycastResults.Count > 0;
+            if (blockingUIObjectHit) return;
 
             shouldUpdateJoystick = false;
             transform.position = position;
@@ -60,7 +70,7 @@ namespace VampireClone
 
         public void Press(InputValue input)
         {
-            if(EventSystem.current.alreadySelecting) return;
+            if (EventSystem.current.alreadySelecting) return;
             bool isPressed = input.Get<float>() > 0f;
             if (isPressed) shouldUpdateJoystick = true;
             else Disable();
@@ -68,7 +78,6 @@ namespace VampireClone
 
         private void Disable()
         {
-            Debug.Log("Diasabler");
             canvasGroup.alpha = 0f;
             Player.Instance.SetDirection(Vector2.zero);
         }
@@ -80,8 +89,7 @@ namespace VampireClone
 
         internal void ChangePosition(Vector2 position)
         {
-            Debug.Log($"Already selecting {EventSystem.current.currentSelectedGameObject}");
-            if (EventSystem.current.currentSelectedGameObject!=null) return;
+            if (EventSystem.current.currentSelectedGameObject != null) return;
 
             if (shouldUpdateJoystick) UpdateJoystick(position);
             else UpdateTouchDelta(position);

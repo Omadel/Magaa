@@ -1,9 +1,6 @@
 ﻿using DG.Tweening;
 using Etienne;
 using Etienne.Pools;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,6 +27,7 @@ namespace VampireClone
         [SerializeField] private float durationFX = 3f;
         [SerializeField] private Bullet bulletPrefab;
         [SerializeField] private float bulletSpeed;
+        [SerializeField] private float maxAimAngle = 40f;
         [SerializeField] private ParticleSystem bloodFXPrefab;
 
         [Header("Cached fields")]
@@ -77,7 +75,6 @@ namespace VampireClone
             Gizmos.DrawLine(transform.position, transform.position + forward);
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, transform.position + right);
-
             Gizmos.color = Color.white;
         }
 
@@ -100,28 +97,38 @@ namespace VampireClone
             Debug.Log("SHOOT");
             Bullet bullet = bulletQueue.Dequeue();
             bullet.transform.SetPositionAndRotation(bulletPrefab.transform.position, bulletPrefab.transform.rotation);
-            bullet.Shoot(Aim(bullet), bulletSpeed);
+            bullet.Shoot(GetDirectionToClosestUnitInAngle(bullet), bulletSpeed);
             shootTimer.Restart();
             animator.SetTrigger("Shoot");
             ParticleSystem shootFX = shootFXPool.Dequeue(durationFX);
             shootFX.transform.SetPositionAndRotation(shootFXTransform.position, shootFXTransform.rotation);
         }
 
-        private Vector3 Aim(Bullet bullet)
+        private Vector3 GetDirectionToClosestUnitInAngle(Bullet bullet)
         {
-            List<Unit> units = UnitManager.Instance.Units;
-            Vector3 position = bullet.transform.position;
-            Vector3 direction;
+            // Initialize the direction 
+            Vector3 direction = transform.forward;
             Vector3 forward = transform.forward;
-            for (int i = 0; i < units.Count; i++)
+            float closestAngle = 180;
+            //iterate over the units
+            foreach (Unit unit in UnitManager.Instance.Units)
             {
-                Vector3 targetPosition = units[i].transform.position;
-                targetPosition.y = position.y;
-                direction = position.Direction(targetPosition).normalized;
-                float dot = Vector3.Dot(forward, direction);
-                if (dot >= .9f) return direction;
+                Vector3 targetPosition = unit.transform.position;
+                //update the y position 
+                targetPosition.y = bullet.transform.position.y;
+
+                Vector3 directionToTarget = targetPosition - bullet.transform.position;
+                directionToTarget.Normalize();
+
+                // calculate the angle
+                float angle = Vector3.Angle(forward, directionToTarget);
+                // Check if angle is less than the max allowed angle
+                if (angle < closestAngle && angle < maxAimAngle)
+                {
+                    closestAngle = angle;
+                    direction = directionToTarget;
+                }
             }
-            direction = transform.forward;
             return direction;
         }
 
@@ -136,14 +143,23 @@ namespace VampireClone
         }
 
         private void OnMove(InputValue input) => SetDirection(input.Get<Vector2>());
-
+        public int angleSteps = 45;
         public void SetDirection(Vector2 direction)
         {
             inputDirection = direction;
 
             animator.SetBool("Walking", direction.sqrMagnitude > .1f);
             if (direction.sqrMagnitude <= .1f) return;
-            transform.forward = ((forward * direction.y) + (right * direction.x)).normalized;
+            //transform.forward = ((forward * direction.y) + (right * direction.x)).normalized;
+
+            Vector3 targetDirection = (forward * direction.y) + (right * direction.x);
+            targetDirection.Normalize();
+            float angle = Vector3.SignedAngle(forward, targetDirection, Vector3.up);
+            // Round the angle to the nearest multiple of angleSteps
+            int roundedAngle = Mathf.RoundToInt(angle / angleSteps) * angleSteps;
+            Debug.Log(roundedAngle);
+            // Use Quaternion to rotate the object by the rounded angle
+            transform.forward = Quaternion.Euler(0, roundedAngle, 0) * forward;
         }
 
         public void SetJoystick(Joystick joystick) => this.joystick = joystick;
@@ -152,8 +168,9 @@ namespace VampireClone
 
         private void Update()
         {
-            Vector3 direction = ((forward * inputDirection.y) + (right * inputDirection.x)).normalized;
-            transform.position += Time.deltaTime * walkSpeed * direction;
+            //Vector3 direction = ((forward * inputDirection.y) + (right * inputDirection.x)).normalized;
+            Debug.Log(inputDirection.magnitude);
+            transform.position += Time.deltaTime * walkSpeed * transform.forward * inputDirection.magnitude;
         }
 
         public void Hit(int value)
