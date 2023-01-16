@@ -62,3 +62,5 @@ crashlytics-build.properties
 *todelete*
 *UserSettings/
 *.unitypackage.meta
+[Oo][Ll][Dd]/
+[Oo][Ll][Dd].meta

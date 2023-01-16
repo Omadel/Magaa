@@ -1,46 +1,30 @@
 using UnityEngine;
 
-namespace VampireClone
+namespace Magaa
 {
     public class Bullet : MonoBehaviour
     {
-        [SerializeField] private TrailRenderer trailRenderer;
-        [SerializeField] private Rigidbody rigidbody;
-        private float speed;
-        private Vector3 zero = Vector3.zero;
+        private float speed, damage;
 
-
-        public void Shoot(Vector3 forward, float bulletSpeed)
+        public void Shoot(Vector3 forward, float bulletSpeed, float bulletDamage)
         {
-            Reset();
-            rigidbody.velocity = zero;
-            rigidbody.angularVelocity = zero;
             speed = bulletSpeed;
+            damage = bulletDamage;
             transform.forward = forward;
         }
 
-        private void Reset()
+        private void Update()
         {
-            trailRenderer.Clear();
+            transform.position += speed * Time.deltaTime * transform.forward;
         }
 
         private void FixedUpdate()
         {
-            rigidbody.MovePosition(transform.position + speed * Time.deltaTime * transform.forward);
-            if (!GetComponent<Renderer>().isVisible) Enqueue();
-        }
-
-        private void OnCollisionEnter(Collision collision)
-        {
-            if (!collision.gameObject.TryGetComponent(out Unit unit)) return;
-            unit.Hit(Player.Instance.Damage);
-            Enqueue(true);
-
-        }
-
-        private void Enqueue(bool collide = false)
-        {
-            Player.Instance.EnqueueBullet(this, collide);
+            Ray ray = new Ray(transform.position - transform.forward * transform.localScale.z, transform.forward);
+            if (!Physics.Raycast(ray, out RaycastHit hit, transform.localScale.z * 2)) return;
+            if (!hit.transform.TryGetComponent<Enemy>(out Enemy enemy)) return;
+            enemy.Hit(damage);
+            GameObject.Destroy(this.gameObject);
         }
     }
 }

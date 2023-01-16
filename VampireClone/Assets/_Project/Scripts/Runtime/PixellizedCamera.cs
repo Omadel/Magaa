@@ -1,14 +1,14 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-namespace VampireClone
+namespace Magaa
 {
     [RequireComponent(typeof(Camera))]
     [ExecuteAlways]
     public class PixellizedCamera : MonoBehaviour
     {
         [SerializeField, Tooltip("Render Scale at 1080p")] private float pixelSize = .3f;
-        private Camera camera;
+        private new Camera camera;
         private readonly Vector2Int defaultResolution = new Vector2Int(1920, 1080);
         private Vector2Int currentResolution;
 
