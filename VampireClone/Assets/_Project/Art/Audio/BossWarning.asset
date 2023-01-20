@@ -15,7 +15,7 @@ MonoBehaviour:
   _Parameters:
     audioMixerGroup: {fileID: -7122658267472150674, guid: 95ac99a2b4a87784ea682b70710ddd9e,
       type: 2}
-    priority: 68
+    priority: 22
     volume: 1
     pitch: 1
     stereoPan: 0
