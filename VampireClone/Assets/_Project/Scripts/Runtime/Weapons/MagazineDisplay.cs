@@ -31,7 +31,6 @@ namespace Magaa
             maxAmmo = amount;
             for (int i = ammoRenderers.Count; i < maxAmmo; i++)
             {
-                Debug.Log(i);
                 MeshRenderer ammo = Instantiate(ammoTemplate, transform);
                 ammo.gameObject.SetActive(true);
                 ammo.GetComponent<MeshFilter>().mesh = ammoMesh;

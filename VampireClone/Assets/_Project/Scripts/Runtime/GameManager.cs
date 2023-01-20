@@ -3,6 +3,7 @@ using Etienne;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 using Range = Etienne.Range;
 
 namespace Magaa
@@ -33,8 +34,11 @@ namespace Magaa
 
         [Header("EnemyWaves")]
         [SerializeField] private Enemy enemyPrefab;
-        [SerializeField] private float enemySpawnRate = 1f;
-        [SerializeField] private int enemySpawnCount = 3;
+        [SerializeField] private AnimationCurve enemySpawnRate;
+        [SerializeField] private AnimationCurve enemySpawnCount;
+        [SerializeField] private AnimationCurve enemyHealth;
+        [SerializeField] private AnimationCurve enemyDamage;
+        [SerializeField] private AnimationCurve enemySpeed;
         [SerializeField, MinMaxRange(0f, 50f)] private Range enemySpawnRange = new Range(10f, 15f);
 
         private Player player;
@@ -84,13 +88,19 @@ namespace Magaa
         private void HandleEnemySpawns()
         {
             ennemyTime += Time.deltaTime;
-            float spawnDelay = enemySpawnRate / enemySpawnCount;
+            float curveValue = currentTime / (totalGameTime * 60);
+            float spawnDelay = enemySpawnRate.Evaluate(curveValue) / enemySpawnCount.Evaluate(curveValue);
             if (ennemyTime < spawnDelay) return;
             ennemyTime -= spawnDelay;
 
             Vector3 position = player.transform.position + GetRandomPositionInsindeRange();
             Vector3 direction = player.transform.position - position;
             Enemy enemy = GameObject.Instantiate(enemyPrefab, position, Quaternion.LookRotation(RoundWorldDirection(direction)));
+
+            float value = Random.value;
+            float speed = enemySpeed.Evaluate(curveValue);
+            bool isRunning = value < speed;
+            enemy.SetStats(enemyHealth.Evaluate(curveValue), enemyDamage.Evaluate(curveValue), isRunning);
         }
 
         private Vector3 GetRandomPositionInsindeRange()

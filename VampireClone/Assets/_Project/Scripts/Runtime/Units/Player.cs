@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Etienne;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,12 @@ namespace Magaa
         [SerializeField] private GameObject startingWeaponHolsterEmpty, startingWeaponHolsterFull;
         [SerializeField, ReadOnly] private Weapon currentWeapon;
         [SerializeField] private Transform weaponRoot;
+
+        [Header("Hit")]
+        [SerializeField, ReadOnly] private Material playerMaterial;
+        [SerializeField] private float hitDuration;
+        [SerializeField, ColorUsage(false, true)] private Color hitColor = Color.white;
+        private Tween hitTween;
         private bool isShooting = false;
         private float attackSpeedMult = 1f;
         private float fireTimer;
@@ -49,6 +56,8 @@ namespace Magaa
             currentAmmo = currentWeapon.Data.MagazineCapacity;
             isShooting = true; fireTimer = 0;
             currentWeapon.StartShooting(attackSpeedMult);
+            float reloadingSpeed = currentWeapon.Data.ReloadSpeed;
+            animator.SetFloat("ReloadingSpeed", reloadingSpeed);
         }
 
         private void Update()
@@ -90,6 +99,7 @@ namespace Magaa
                 Reload();
                 return;
             }
+            currentWeapon.Data.ShootCue.Play(transform.position);
             animator.Play("Shoot", 1);
             magazineDisplay.Shoot();
         }
@@ -97,6 +107,7 @@ namespace Magaa
         public void AnimationEndedReload()
         {
             magazineDisplay.Reload();
+            currentWeapon.Data.MagInCue.Play(transform.position);
             currentAmmo = currentWeapon.Data.MagazineCapacity;
             isShooting = true;
             fireTimer = 0;
@@ -106,6 +117,7 @@ namespace Magaa
         private void Reload()
         {
             animator.Play("Reload", 1);
+            currentWeapon.Data.MagOutCue.Play(transform.position);
             isShooting = false;
             currentWeapon.StopShooting();
         }
@@ -116,12 +128,14 @@ namespace Magaa
             attackSpeedMult += .1f;
             currentWeapon.StartShooting(attackSpeedMult);
             float shootingAnimationSpeed = 1 / currentWeapon.AttackDuration;
-            Debug.Log(shootingAnimationSpeed);
             animator.SetFloat("ShootingSpeed", Mathf.Max(1f, shootingAnimationSpeed));
         }
 
         internal void Hit(float damage)
         {
+            hitTween?.Complete();
+            hitTween = DOTween.To(() => playerMaterial.GetColor("_EmissionColor"), x => playerMaterial.SetColor("_EmissionColor", x), hitColor, hitDuration).SetLoops(2, LoopType.Yoyo);
+            Vibration.Vibrate(Mathf.RoundToInt(1000*hitDuration));
             SetHealth(currentHealth - damage);
         }
 

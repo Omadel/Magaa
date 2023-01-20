@@ -200,10 +200,10 @@
                 {
                     "name": "",
                     "id": "c50060e7-0336-40d5-8899-c3af4bafe52b",
-                    "path": "",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard&Mouse",
                     "action": "Escape",
                     "isComposite": false,
                     "isPartOfComposite": false

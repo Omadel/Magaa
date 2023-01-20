@@ -1,6 +1,5 @@
 using Etienne;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Magaa
 {
@@ -10,19 +9,27 @@ namespace Magaa
         public float FireRate => fireRate;
         public float BulletSpeed => bulletSpeed;
         public float BulletDamage => bulletDamage;
-        public float ReloadingDuration => reloadingDuration;
+        public float ReloadSpeed => 1 / (reloadingDuration / reloadClip.length);
         public int MagazineCapacity => magazineCapacity;
         public Mesh AmmoMesh => ammoMesh;
         public Weapon Prefab => prefab;
-        public float ReloadDuration=>reloadClip.length;
+        public Cue ShootCue  => shootCue;
+        public Cue ReloadCue => reloadCue;
+        public Cue MagInCue => magInCue;
+        public Cue MagOutCue => magOutCue;
 
         [SerializeField] private float fireRate = .5f;
         [SerializeField] private float bulletSpeed = 12f;
         [SerializeField] private float bulletDamage = 50f;
-        [SerializeField] float reloadingDuration = 1f;
-        [SerializeField] int magazineCapacity = 12;
-        [SerializeField] Mesh ammoMesh;
+        [SerializeField] private int magazineCapacity = 12;
+        [SerializeField] private Mesh ammoMesh;
         [SerializeField] private Weapon prefab;
-        [SerializeField] AnimationClip reloadClip;
+        [SerializeField] private float reloadingDuration = 1f;
+        [SerializeField] private AnimationClip reloadClip;
+        [Header("Audio")]
+        [SerializeField] Cue shootCue;
+        [SerializeField] Cue reloadCue;
+        [SerializeField] Cue magInCue;
+        [SerializeField] Cue magOutCue;
     }
 }

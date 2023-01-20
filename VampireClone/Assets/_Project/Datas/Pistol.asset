@@ -12,11 +12,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6de9aff41a33ee4090c29d5477bab87, type: 3}
   m_Name: Pistol
   m_EditorClassIdentifier: 
-  fireRate: 1
+  fireRate: 1.5
   bulletSpeed: 500
-  bulletDamage: 20
-  reloadingDuration: 1
+  bulletDamage: 50
   magazineCapacity: 12
   ammoMesh: {fileID: 4300000, guid: a0b12b0b7c7edba4a9740c5ebb7c454d, type: 3}
   prefab: {fileID: 5421756329569538715, guid: 93cdd75622f400448ac6190889b281b3, type: 3}
+  reloadingDuration: 1.8
   reloadClip: {fileID: 7400000, guid: cdec07a54b86114429322b77d54445b6, type: 2}
+  shootCue:
+    _Clips:
+    - {fileID: 8300000, guid: d71e19b502f611346bee03bcfa5592fc, type: 3}
+    - {fileID: 8300000, guid: 12cd6228d579d264783ebb05880b7e65, type: 3}
+    - {fileID: 8300000, guid: 7560d6ad381cac443a91f5324142f851, type: 3}
+    - {fileID: 8300000, guid: b93c3f3bd1ff3554698787faedb954b0, type: 3}
+    - {fileID: 8300000, guid: ed081d431e41ef64e859c3e74aafb3b0, type: 3}
+    - {fileID: 8300000, guid: b83a5ac00b56eab4aa5ddeb5270a3cca, type: 3}
+    - {fileID: 8300000, guid: 6d3c88587a6ef514997343a26514c449, type: 3}
+    _Parameters: {fileID: 11400000, guid: 11e9a71703bb8ea4196c7d9724a80c20, type: 2}
+  reloadCue:
+    _Clips:
+    - {fileID: 8300000, guid: 3db3984c33baaf241b93132226886985, type: 3}
+    - {fileID: 8300000, guid: 85d72d479c090a44fbaa66fcae8328db, type: 3}
+    - {fileID: 8300000, guid: e361abeee430c1c46be25a4fb540a25b, type: 3}
+    - {fileID: 8300000, guid: 291d10ac545fe6d4c8ac2597f1ef3280, type: 3}
+    - {fileID: 8300000, guid: e28f8cf6a87a4cd43ab1bf5418629448, type: 3}
+    - {fileID: 8300000, guid: 55eed022e6a67044682b87828589a56c, type: 3}
+    _Parameters: {fileID: 11400000, guid: 7f6c0d01e4d75db48a4457fd6b531050, type: 2}
+  magInCue:
+    _Clips:
+    - {fileID: 8300000, guid: 6d14e034f19bf9a4ba8ae067e6c88e28, type: 3}
+    - {fileID: 8300000, guid: 05f01c33837c76047a892517a65880f2, type: 3}
+    - {fileID: 8300000, guid: 45e30532d9822b94c9b0e120a188aaad, type: 3}
+    - {fileID: 8300000, guid: 5cf3af57e9e270546adc7c92b3ee8c79, type: 3}
+    _Parameters: {fileID: 11400000, guid: 7f6c0d01e4d75db48a4457fd6b531050, type: 2}
+  magOutCue:
+    _Clips:
+    - {fileID: 8300000, guid: 3030f89ae1f0adb4eb8f3d7f1f4c7e32, type: 3}
+    _Parameters: {fileID: 11400000, guid: 7f6c0d01e4d75db48a4457fd6b531050, type: 2}

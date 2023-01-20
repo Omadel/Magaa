@@ -6,13 +6,10 @@ namespace Magaa
 {
     public class Joystick : MonoBehaviour
     {
-        [SerializeField] private float fadeDuratiuon = .1f;
-
         private Image touchPosition;
         private bool isShowing;
         private RectTransform rectTransform;
         private CanvasGroup canvasGroup;
-        private Tween fadeTween;
 
         private void Awake()
         {
