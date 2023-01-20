@@ -1994,6 +1994,15 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.16666667
     - serializedVersion: 3
+      time: 0.058071077
+      value: 0.30306548
+      inSlope: 0.70135784
+      outSlope: 0.70135784
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
       time: 1
       value: 0.8
       inSlope: 0
@@ -2008,6 +2017,18 @@ MonoBehaviour:
   enemySpawnRange:
     Min: 10
     Max: 15
+  bossSpawns:
+  - SpawnTime: 1
+    Prefab: {fileID: 3240531882592819792, guid: fe26926bbbde7a44d97c4efe28d1ba77,
+      type: 3}
+    WarningSound:
+      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
+      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
+    SpawnSound:
+      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
+      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
+    HasBeenAnounced: 0
+    HasSpawnSounded: 0
 --- !u!1 &3247245308698111859
 GameObject:
   m_ObjectHideFlags: 0

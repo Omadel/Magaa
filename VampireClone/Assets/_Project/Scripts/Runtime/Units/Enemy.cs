@@ -17,13 +17,18 @@ namespace Magaa
         [SerializeField] private ParticleSystem hitPrefab;
         [SerializeField] private float attackRange = 1.5f;
         [Header("Audio")]
+        [SerializeField, Range(0f, 1f)] float spawnSoundChance;
+        [SerializeField] private Cue spawnCue;
+        [SerializeField] private Cue warningRunningCue;
         [SerializeField] private Cue hitCue;
+        [SerializeField] private Cue deathCue;
 
         private float updateTimer;
         private Transform playerTransform;
         private Animator animator;
         private Material material;
         private NavMeshAgent agent;
+        AudioSource warningSource;
 
         private void Awake()
         {
@@ -50,7 +55,7 @@ namespace Magaa
             animator = GetComponentInChildren<Animator>();
             animator.SetFloat("Posture", Random.value);
             animator.CrossFadeInFixedTime("Walk", 0, 0, Random.value * animator.runtimeAnimatorController.animationClips[1].length);
-
+          if(Random.value<spawnSoundChance)  spawnCue.Play(transform.position);
         }
 
         internal void SetStats(float health, float damage, bool isRunning)
@@ -61,6 +66,7 @@ namespace Magaa
             agent.speed = isRunning ? runSpeed : walkSpeed;
             animator = GetComponentInChildren<Animator>();
             animator.SetBool("IsRunning", isRunning);
+            if (isRunning) warningSource = warningRunningCue.Play(transform.position);
         }
 
         private void Update()
@@ -96,15 +102,14 @@ namespace Magaa
             {
                 Die();
             }
-            else
-            {
-            }
             hitCue.Play(transform.position);
         }
 
         private void Die()
         {
             hitTween?.Kill();
+            deathCue.Play(transform.position);
+           if(warningSource!= null) warningSource.Stop();
             GameManager.Instance.RemoveEnemy(this);
             GameObject.Instantiate(rubisPrefab, transform.position, Quaternion.identity);
             GameObject.Destroy(gameObject);

@@ -40,7 +40,23 @@ namespace Magaa
         [SerializeField] private AnimationCurve enemyDamage;
         [SerializeField] private AnimationCurve enemySpeed;
         [SerializeField, MinMaxRange(0f, 50f)] private Range enemySpawnRange = new Range(10f, 15f);
+        [Header("Bosses")]
+        [SerializeField] private BossSpawn[] bossSpawns;
 
+        [System.Serializable]
+        private class BossSpawn
+        {
+            public float WarningTime => (SpawnTime * 60f) - WarningSound.Clip.length;
+            public float SpawnSoundTime => (SpawnTime * 60f) - SpawnSound.Clip.length;
+            [Tooltip("In Minutes")] public float SpawnTime;
+            public GameObject Prefab;
+            public Sound WarningSound;
+            public Sound SpawnSound;
+            [ReadOnly] public bool HasBeenAnounced = false;
+            [ReadOnly] public bool HasSpawnSounded = false;
+        }
+
+        private int bossIndex = 0;
         private Player player;
         private ExperienceBar experienceBar;
         private List<Enemy> enemies = new List<Enemy>();
@@ -83,6 +99,26 @@ namespace Magaa
             currentTimeFormatted = $"{currentTimeSpan.Minutes:00}:{currentTimeSpan.Seconds:00}";
             timerTextMesh.text = currentTimeFormatted;
             HandleEnemySpawns();
+            if (bossIndex >= bossSpawns.Length) return;
+            BossSpawn currentBoss = bossSpawns[bossIndex];
+            if (currentTime >= currentBoss.WarningTime && !currentBoss.HasBeenAnounced)
+            {
+                currentBoss.WarningSound.Play(transform.position);
+                currentBoss.HasBeenAnounced = true;
+            }
+            if (currentTime >= currentBoss.SpawnSoundTime && !currentBoss.HasSpawnSounded)
+            {
+                currentBoss.SpawnSound.Play(transform.position);
+                currentBoss.HasSpawnSounded = true;
+            }
+            if (currentTime > currentBoss.SpawnTime * 60f)
+            {
+                bossIndex++;
+
+                Vector3 position = player.transform.position + GetRandomPositionInsindeRange();
+                Vector3 direction = player.transform.position - position;
+                GameObject.Instantiate(currentBoss.Prefab, position, Quaternion.LookRotation(RoundWorldDirection(direction)));
+            }
         }
 
         private void HandleEnemySpawns()
