@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireRate: 1
   bulletSpeed: 500
-  bulletDamage: 10
-  bulletPrefab: {fileID: 3184614745049406776, guid: 41c0a6985fc217b46bba2a55b2352745,
-    type: 3}
+  bulletDamage: 20
+  reloadingDuration: 1
+  magazineCapacity: 12
+  ammoMesh: {fileID: 4300000, guid: a0b12b0b7c7edba4a9740c5ebb7c454d, type: 3}
   prefab: {fileID: 5421756329569538715, guid: 93cdd75622f400448ac6190889b281b3, type: 3}
+  reloadClip: {fileID: 7400000, guid: cdec07a54b86114429322b77d54445b6, type: 2}

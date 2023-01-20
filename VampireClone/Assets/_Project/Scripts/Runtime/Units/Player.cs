@@ -11,14 +11,16 @@ namespace Magaa
         [SerializeField] private float maxHealth = 100;
         [SerializeField, ReadOnly] private float currentHealth;
         [SerializeField] private Slider healthBar;
+        [SerializeField, ReadOnly] private int currentAmmo;
+        [SerializeField] private MagazineDisplay magazineDisplay;
 
         [Header("Weapon")]
         [SerializeField] private WeaponData startingWeapon;
+        [SerializeField] private GameObject startingWeaponHolsterEmpty, startingWeaponHolsterFull;
         [SerializeField, ReadOnly] private Weapon currentWeapon;
         [SerializeField] private Transform weaponRoot;
-        [SerializeField] private AnimationClip shootingClip;
+        private bool isShooting = false;
         private float attackSpeedMult = 1f;
-        private Transform bulletSpawningTransform;
         private float fireTimer;
         private bool isMoving;
         private Animator animator;
@@ -39,18 +41,27 @@ namespace Magaa
 
         private void SetWeapon(WeaponData weapon)
         {
+            bool isStartingWeapon = weapon == startingWeapon;
+            startingWeaponHolsterEmpty.SetActive(isStartingWeapon);
+            startingWeaponHolsterFull.SetActive(!isStartingWeapon);
             currentWeapon = GameObject.Instantiate(weapon.Prefab, weaponRoot);
-            bulletSpawningTransform = currentWeapon.transform;
+            magazineDisplay.SetMaxAmmo(currentWeapon.Data.MagazineCapacity, currentWeapon.Data.AmmoMesh);
+            currentAmmo = currentWeapon.Data.MagazineCapacity;
+            isShooting = true; fireTimer = 0;
+            currentWeapon.StartShooting(attackSpeedMult);
         }
 
         private void Update()
         {
-            fireTimer += Time.deltaTime;
-            float fireDuration = currentWeapon.AttackDuration;
-            if (fireTimer >= fireDuration)
+            if (isShooting)
             {
-                fireTimer -= fireDuration;
-                PlayShootAnimation();
+                fireTimer += Time.deltaTime;
+                float fireDuration = currentWeapon.AttackDuration;
+                if (fireTimer >= fireDuration)
+                {
+                    fireTimer -= fireDuration;
+                    PlayShootAnimation();
+                }
             }
             if (isMoving) Move();
         }
@@ -73,7 +84,30 @@ namespace Magaa
 
         private void PlayShootAnimation()
         {
+            currentAmmo--;
+            if (currentAmmo < 0)
+            {
+                Reload();
+                return;
+            }
             animator.Play("Shoot", 1);
+            magazineDisplay.Shoot();
+        }
+
+        public void AnimationEndedReload()
+        {
+            magazineDisplay.Reload();
+            currentAmmo = currentWeapon.Data.MagazineCapacity;
+            isShooting = true;
+            fireTimer = 0;
+            currentWeapon.StartShooting(attackSpeedMult);
+        }
+
+        private void Reload()
+        {
+            animator.Play("Reload", 1);
+            isShooting = false;
+            currentWeapon.StopShooting();
         }
 
         public void TORENAMESHITNAME()

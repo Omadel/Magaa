@@ -1,4 +1,5 @@
 using Etienne;
+using System.Collections;
 using UnityEngine;
 
 namespace Magaa
@@ -14,22 +15,34 @@ namespace Magaa
         [SerializeField] private Transform shootTransform;
         [SerializeField] private ParticleSystem bulletSystem;
         private Bullet bullet;
-        private Transform direction;
 
         private void Start()
         {
-            StartShooting(1);
+            StopShooting();
             bullet = bulletSystem.gameObject.AddComponent<Bullet>();
             bullet.SetDamage(data.BulletDamage);
         }
 
-        public void StartShooting(float additionnalSpeed)
+        public void StopShooting()
         {
-            attackDuration = 1 / (data.FireRate * additionnalSpeed);
-            Debug.Log(AttackDuration);
             foreach (ParticleSystem particleSystem in particleSystems)
             {
                 particleSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+        }
+
+        public void StartShooting(float additionnalSpeed)
+        {
+            StartCoroutine(StartShootingRoutine(additionnalSpeed));
+        }
+
+        private IEnumerator StartShootingRoutine(float additionnalSpeed)
+        {
+            StopShooting();
+            attackDuration = 1 / (data.FireRate * additionnalSpeed);
+            yield return new WaitForSeconds(attackDuration);
+            foreach (ParticleSystem particleSystem in particleSystems)
+            {
                 ParticleSystem.MainModule main = particleSystem.main;
                 main.duration = AttackDuration;
                 if (particleSystem == bulletSystem)
@@ -39,10 +52,9 @@ namespace Magaa
                 }
                 particleSystem.Play(false);
             }
-
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             shootTransform.forward = GameManager.Instance.Player.transform.forward;
         }
