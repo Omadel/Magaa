@@ -12,8 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 188b5154c9b4d8642b03d2a24e17bda1, type: 3}
   m_Name: Boss
   m_EditorClassIdentifier: 
-  SourceClips: []
+  SourceClips:
+  - {fileID: -203655887218126122, guid: e34fa72090366164285c4b059dbbe7c7, type: 3}
+  - {fileID: -203655887218126122, guid: d75fd4653e8ac904dac02ce4bb0112d5, type: 3}
+  - {fileID: -203655887218126122, guid: ae4e75ab75f81b74ba1623d05eff7153, type: 3}
+  - {fileID: -203655887218126122, guid: c09e13a8da15805449718ea6921b42aa, type: 3}
+  - {fileID: -203655887218126122, guid: 12bb86f3d3d891741a492837060e2868, type: 3}
   KeyframeMode: 0
-  KeyframeRate: 0
+  KeyframeRate: 12
   ManualKeyframeTimes: []
   FixedTimeDelay: 0.1
