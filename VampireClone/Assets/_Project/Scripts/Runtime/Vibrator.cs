@@ -51,6 +51,11 @@ namespace Magaa
                 yield return new WaitForSeconds(duration);
                 Gamepad.current?.SetMotorSpeeds(0, 0);
             }
+
+            private void OnDestroy()
+            {
+                Gamepad.current?.SetMotorSpeeds(0, 0);
+            }
         }
 
         public static void Vibrate()

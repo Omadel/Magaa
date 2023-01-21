@@ -8,7 +8,7 @@ namespace Magaa
     {
         public float FireRate => fireRate;
         public float BulletSpeed => bulletSpeed;
-        public float BulletDamage => bulletDamage;
+        public int BulletDamage => bulletDamage;
         public float ReloadSpeed => 1 / (reloadingDuration / reloadClip.length);
         public int MagazineCapacity => magazineCapacity;
         public Mesh AmmoMesh => ammoMesh;
@@ -20,7 +20,7 @@ namespace Magaa
 
         [SerializeField] private float fireRate = .5f;
         [SerializeField] private float bulletSpeed = 12f;
-        [SerializeField] private float bulletDamage = 50f;
+        [SerializeField] private int bulletDamage = 50;
         [SerializeField] private int magazineCapacity = 12;
         [SerializeField] private Mesh ammoMesh;
         [SerializeField] private Weapon prefab;

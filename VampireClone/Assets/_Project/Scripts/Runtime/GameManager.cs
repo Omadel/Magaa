@@ -22,6 +22,7 @@ namespace Magaa
         [SerializeField, Tooltip("Time in minute")] private float totalGameTime = 15f;
         [SerializeField, ReadOnly] private string currentTimeFormatted;
         [SerializeField] private TMPro.TextMeshProUGUI timerTextMesh;
+        [SerializeField] GameObject helicopter;
 
         [Header("Levels")]
         [SerializeField] private AnimationCurve experienceCurve;
@@ -62,7 +63,6 @@ namespace Magaa
         private List<Enemy> enemies = new List<Enemy>();
         private float currentTime;
         private float ennemyTime;
-
         private Vector3 forward, right;
 
 #if UNITY_EDITOR
@@ -90,6 +90,7 @@ namespace Magaa
             CalculateDirectionVectors();
             LevelUp(false);
             upgrade.SetActive(false);
+            helicopter.SetActive(false);
         }
 
         private void Update()
@@ -119,6 +120,12 @@ namespace Magaa
                 Vector3 direction = player.transform.position - position;
                 GameObject.Instantiate(currentBoss.Prefab, position, Quaternion.LookRotation(RoundWorldDirection(direction)));
             }
+            if (currentTime >= totalGameTime * 60f)
+            {
+                helicopter.SetActive(true);
+                helicopter.transform.position = player.transform.position;
+                enabled = false;
+            }
         }
 
         private void HandleEnemySpawns()
@@ -136,7 +143,7 @@ namespace Magaa
             float value = Random.value;
             float speed = enemySpeed.Evaluate(curveValue);
             bool isRunning = value < speed;
-            enemy.SetStats(enemyHealth.Evaluate(curveValue), enemyDamage.Evaluate(curveValue), isRunning);
+            enemy.SetStats(Mathf.RoundToInt(enemyHealth.Evaluate(curveValue)), Mathf.RoundToInt(enemyDamage.Evaluate(curveValue)), isRunning);
         }
 
         private Vector3 GetRandomPositionInsindeRange()

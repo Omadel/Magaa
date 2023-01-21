@@ -5,11 +5,13 @@ using UnityEngine.AI;
 
 namespace Magaa
 {
-    public class Enemy : MonoBehaviour
+    public class Enemy : MonoBehaviour, IDamageable
     {
-        [SerializeField] private float damage = 1;
-        [SerializeField] private float maxHealth = 100;
-        [SerializeField, ReadOnly] private float currentHealth;
+        public int Health => currentHealth;
+
+        [SerializeField] private int damage = 1;
+        [SerializeField] private int maxHealth = 100;
+        [SerializeField, ReadOnly] private int currentHealth;
         [SerializeField] private float walkSpeed = .4f;
         [SerializeField] private float runSpeed = 3f;
         [SerializeField] private float updateRate = 1f;
@@ -58,7 +60,7 @@ namespace Magaa
           if(Random.value<spawnSoundChance)  spawnCue.Play(transform.position);
         }
 
-        internal void SetStats(float health, float damage, bool isRunning)
+        internal void SetStats(int health, int damage, bool isRunning)
         {
             maxHealth = health;
             currentHealth = maxHealth;
@@ -79,7 +81,7 @@ namespace Magaa
             }
             agent.isStopped = false;
 
-            animator.SetBool("Walking", true); ;
+            animator.SetBool("Walking", true); 
             updateTimer += Time.deltaTime;
             if (updateTimer < 1 / updateRate) return;
             updateTimer -= 1 / updateRate;
@@ -93,7 +95,7 @@ namespace Magaa
         }
 
         private Tween hitTween;
-        internal void Hit(float damage)
+        public void Hit(int damage)
         {
             currentHealth -= damage;
             hitTween?.Complete();
@@ -105,7 +107,7 @@ namespace Magaa
             hitCue.Play(transform.position);
         }
 
-        private void Die()
+        void Die()
         {
             hitTween?.Kill();
             deathCue.Play(transform.position);

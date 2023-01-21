@@ -4,8 +4,8 @@ namespace Magaa
 {
     public class Bullet : MonoBehaviour
     {
-        public float Damage => damage;
-        public void SetDamage(float damage) => this.damage = damage;
-        private float damage;
+        public int Damage => damage;
+        public void SetDamage(int damage) => this.damage = damage;
+        private int damage;
     }
 }

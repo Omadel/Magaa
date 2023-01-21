@@ -5,12 +5,14 @@ using UnityEngine.UI;
 
 namespace Magaa
 {
-    public class Player : MonoBehaviour
+    public class Player : MonoBehaviour, IDamageable
     {
+        public int Health => currentHealth;
+
         [Header("Stats")]
         [SerializeField] private float walkSpeed = 5f;
-        [SerializeField] private float maxHealth = 100;
-        [SerializeField, ReadOnly] private float currentHealth;
+        [SerializeField] private int maxHealth = 100;
+        [SerializeField, ReadOnly] private int currentHealth;
         [SerializeField] private Slider healthBar;
         [SerializeField, ReadOnly] private int currentAmmo;
         [SerializeField] private MagazineDisplay magazineDisplay;
@@ -44,6 +46,7 @@ namespace Magaa
             SetHealth(maxHealth);
             SetWeapon(startingWeapon);
             TORENAMESHITNAME();
+            playerMaterial.SetColor("_EmissionColor", Color.black);
         }
 
         private void SetWeapon(WeaponData weapon)
@@ -131,24 +134,31 @@ namespace Magaa
             animator.SetFloat("ShootingSpeed", Mathf.Max(1f, shootingAnimationSpeed));
         }
 
-        internal void Hit(float damage)
+        public void Hit(int damage)
         {
+            if (!enabled) return;
             hitTween?.Complete();
             hitTween = DOTween.To(() => playerMaterial.GetColor("_EmissionColor"), x => playerMaterial.SetColor("_EmissionColor", x), hitColor, hitDuration).SetLoops(2, LoopType.Yoyo);
             Vibration.Vibrate(Mathf.RoundToInt(1000*hitDuration));
             SetHealth(currentHealth - damage);
         }
 
-        private void SetHealth(float value)
+        private void SetHealth(int value)
         {
             currentHealth = value;
-            healthBar.value = currentHealth / maxHealth;
+            healthBar.value = currentHealth / (float)maxHealth;
             if (currentHealth <= 0) Die();
         }
 
         private void Die()
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        }
+
+        private void OnParticleCollision(GameObject other)
+        {
+            if (!other.TryGetComponent(out Bullet bullet)) return;
+            Hit(bullet.Damage);
         }
     }
 }
