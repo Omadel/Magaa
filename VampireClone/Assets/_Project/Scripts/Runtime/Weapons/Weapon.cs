@@ -32,6 +32,15 @@ namespace Magaa
             StopShooting();
         }
 
+        public void AddDamages(int additionnalDamages)
+        {
+            var bullets = GetComponentsInChildren<Bullet>();
+            foreach (var bullet in bullets)
+            {
+                bullet.SetDamage(data.BulletDamage + additionnalDamages);
+            }
+        }
+
         public void StartShooting(float additionnalSpeed)
         {
             StartCoroutine(StartShootingRoutine(additionnalSpeed));

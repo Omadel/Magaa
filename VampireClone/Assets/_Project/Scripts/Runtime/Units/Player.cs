@@ -35,6 +35,8 @@ namespace Magaa
         private bool isImpared = false;
         private bool isShooting = false;
         private float attackSpeedMult = 1f;
+        private float realoadingSpeedMult = 1f;
+        private int additionalDamages = 0;
         private float fireTimer;
         private bool isMoving;
         private Animator animator;
@@ -50,7 +52,6 @@ namespace Magaa
         {
             SetHealth(maxHealth);
             SetWeapon(startingWeapon);
-            TORENAMESHITNAME();
             playerMaterial.SetColor("_EmissionColor", Color.black);
             currentSpeed = walkSpeed;
         }
@@ -64,7 +65,8 @@ namespace Magaa
             currentWeapon = GameObject.Instantiate(weapon.Prefab, weaponRoot);
             magazineDisplay.SetMaxAmmo(currentWeapon.Data.MagazineCapacity, currentWeapon.Data.AmmoMesh);
             currentAmmo = currentWeapon.Data.MagazineCapacity;
-            isShooting = true; fireTimer = 0;
+            isShooting = true; 
+            fireTimer = 0;
             currentWeapon.StartShooting(attackSpeedMult);
             float reloadingSpeed = currentWeapon.Data.ReloadSpeed;
             animator.SetFloat("ReloadingSpeed", reloadingSpeed);
@@ -164,13 +166,27 @@ namespace Magaa
             currentWeapon.StopShooting();
         }
 
-        public void TORENAMESHITNAME()
+        public void UpgradeAttackSpeed()
         {
             GameManager.Instance.UnPauseGame();
             attackSpeedMult += .1f;
             SetWeapon(currentWeapon.Data);
             float shootingAnimationSpeed = 1 / currentWeapon.AttackDuration;
             animator.SetFloat("ShootingSpeed", Mathf.Max(1f, shootingAnimationSpeed));
+        }
+        public void UpgradeDamages()
+        {
+            GameManager.Instance.UnPauseGame();
+            SetWeapon(currentWeapon.Data);
+            additionalDamages += 10;
+            currentWeapon.AddDamages(additionalDamages);
+        }
+        public void UpgradeReloadSpeed()
+        {
+            GameManager.Instance.UnPauseGame();
+            realoadingSpeedMult += .1f;
+            SetWeapon(currentWeapon.Data);
+            animator.SetFloat("ReloadingSpeed", Mathf.Max(1f, realoadingSpeedMult));
         }
 
         public void Hit(int damage)

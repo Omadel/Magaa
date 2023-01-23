@@ -432,7 +432,7 @@ GameObject:
   - component: {fileID: 671973652}
   - component: {fileID: 671973651}
   m_Layer: 5
-  m_Name: Upgrade (1)
+  m_Name: Upgrade DMG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -543,7 +543,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3247245308433801054}
         m_TargetAssemblyTypeName: Magaa.Player, Assembly-CSharp
-        m_MethodName: TORENAMESHITNAME
+        m_MethodName: UpgradeDamages
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -731,7 +731,7 @@ GameObject:
   - component: {fileID: 1195981473}
   - component: {fileID: 1195981472}
   m_Layer: 5
-  m_Name: Upgrade
+  m_Name: Upgrade AS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -842,7 +842,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3247245308433801054}
         m_TargetAssemblyTypeName: Magaa.Player, Assembly-CSharp
-        m_MethodName: TORENAMESHITNAME
+        m_MethodName: UpgradeAttackSpeed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1697,7 +1697,7 @@ GameObject:
   - component: {fileID: 1997471880}
   - component: {fileID: 1997471879}
   m_Layer: 5
-  m_Name: Upgrade (2)
+  m_Name: Upgrade ReloadSpeed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1808,7 +1808,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3247245308433801054}
         m_TargetAssemblyTypeName: Magaa.Player, Assembly-CSharp
-        m_MethodName: TORENAMESHITNAME
+        m_MethodName: UpgradeReloadSpeed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
