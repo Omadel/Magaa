@@ -208,7 +208,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -85}
+  m_AnchoredPosition: {x: 0, y: -135}
   m_SizeDelta: {x: -160, y: 20}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1621124469
@@ -2625,7 +2625,6 @@ GameObject:
   - component: {fileID: 8894208400333574968}
   - component: {fileID: 8894208400333574969}
   - component: {fileID: 503981240}
-  - component: {fileID: 503981241}
   - component: {fileID: 7613231540635165039}
   m_Layer: 0
   m_Name: Player
@@ -2665,11 +2664,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 5
-  maxHealth: 100
+  currentSpeed: 0
+  maxHealth: 200
   currentHealth: 0
   healthBar: {fileID: 936786859917045373}
   currentAmmo: 0
   magazineDisplay: {fileID: 1174550807}
+  triggerMask:
+    serializedVersion: 2
+    m_Bits: 2147483647
   startingWeapon: {fileID: 11400000, guid: dd42ad8d23ba7e9499bd3d848be73d42, type: 2}
   startingWeaponHolsterEmpty: {fileID: 8624387493083286716}
   startingWeaponHolsterFull: {fileID: 8624387493644129873}
@@ -2694,19 +2697,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!135 &503981241
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8894208400333574971}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 3
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &7613231540635165039
 BoxCollider:
   m_ObjectHideFlags: 0

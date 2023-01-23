@@ -18,19 +18,26 @@ namespace Magaa
         [SerializeField] private Rubis rubisPrefab;
         [SerializeField] private ParticleSystem hitPrefab;
         [SerializeField] private float attackRange = 1.5f;
+        [Header("Puke")]
+        [SerializeField] private ParticleSystem pukeThrower;
+        [SerializeField] private Poison poisonPuddle;
+        [SerializeField, ReadOnly] private bool isPuking = false;
+        [SerializeField] private float pukingChance = .3f;
+        [SerializeField] private float pukingDelay = 5f;
         [Header("Audio")]
-        [SerializeField, Range(0f, 1f)] float spawnSoundChance;
+        [SerializeField, Range(0f, 1f)] private float spawnSoundChance;
         [SerializeField] private Cue spawnCue;
         [SerializeField] private Cue warningRunningCue;
         [SerializeField] private Cue hitCue;
         [SerializeField] private Cue deathCue;
 
+        private float pukingTimer;
         private float updateTimer;
         private Transform playerTransform;
         private Animator animator;
         private Material material;
         private NavMeshAgent agent;
-        AudioSource warningSource;
+        private AudioSource warningSource;
 
         private void Awake()
         {
@@ -57,7 +64,10 @@ namespace Magaa
             animator = GetComponentInChildren<Animator>();
             animator.SetFloat("Posture", Random.value);
             animator.CrossFadeInFixedTime("Walk", 0, 0, Random.value * animator.runtimeAnimatorController.animationClips[1].length);
-          if(Random.value<spawnSoundChance)  spawnCue.Play(transform.position);
+            if (Random.value < spawnSoundChance) spawnCue.Play(transform.position);
+            pukeThrower.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            pukingTimer = Random.value * pukingDelay;
+            poisonPuddle.Disable();
         }
 
         internal void SetStats(int health, int damage, bool isRunning)
@@ -73,6 +83,24 @@ namespace Magaa
 
         private void Update()
         {
+            if (isPuking)
+            {
+                return;
+            }
+            else
+            {
+                pukingTimer += Time.deltaTime;
+                if (pukingTimer > pukingDelay && Random.value < pukingChance)
+                {
+                    pukingTimer -= pukingDelay;
+                    isPuking = true;
+                    animator.Play("Puke");
+                    agent.isStopped = true;
+                    poisonPuddle.Enable();
+                    return;
+                }
+            }
+
             if (Vector3.Distance(transform.position, playerTransform.position) < attackRange)
             {
                 animator.SetBool("Walking", false);
@@ -81,12 +109,23 @@ namespace Magaa
             }
             agent.isStopped = false;
 
-            animator.SetBool("Walking", true); 
+            animator.SetBool("Walking", true);
             updateTimer += Time.deltaTime;
             if (updateTimer < 1 / updateRate) return;
             updateTimer -= 1 / updateRate;
             agent.SetDestination(playerTransform.position);
             animator.transform.forward = GameManager.Instance.RoundWorldDirection(transform.Direction(playerTransform).normalized);
+        }
+
+        private void StartPuke()
+        {
+            pukeThrower.Play(true);
+        }
+
+        private void StopPuke()
+        {
+            pukeThrower.Stop(true);
+            isPuking = false;
         }
 
         public void Attack()
@@ -107,11 +146,11 @@ namespace Magaa
             hitCue.Play(transform.position);
         }
 
-        void Die()
+        public void Die()
         {
             hitTween?.Kill();
             deathCue.Play(transform.position);
-           if(warningSource!= null) warningSource.Stop();
+            if (warningSource != null) warningSource.Stop();
             GameManager.Instance.RemoveEnemy(this);
             GameObject.Instantiate(rubisPrefab, transform.position, Quaternion.identity);
             GameObject.Destroy(gameObject);

@@ -15,6 +15,7 @@ namespace Magaa
         [SerializeField, ReadOnly] private float currentHealth;
         [SerializeField] private float updateRate = 1f;
         [SerializeField] private LayerMask attackMask;
+        [SerializeField]  Reward reward;
         [Header("FlameThrower")]
         [SerializeField] private ParticleSystem flameThrower;
         [SerializeField, MinMaxRange(0f, 35f)] private Range flameThrowerRange = new Range(0, 2);
@@ -136,6 +137,7 @@ namespace Magaa
 
         public void Hit(int damage)
         {
+            if (!enabled) return;
             currentHealth -= damage;
             hitTween?.Complete();
             hitTween = DOTween.To(() => material.GetFloat("_Hit"), x => material.SetFloat("_Hit", x), 1f, .1f).SetLoops(2, LoopType.Yoyo);
@@ -146,11 +148,20 @@ namespace Magaa
             hitCue.Play(transform.position);
         }
 
+        public void SetReward(int health, Reward reward)
+        {
+            maxHealth = health;
+            currentHealth = health;
+            this.reward = reward;
+        }
+
         public void Die()
         {
+            enabled = false;
+            agent.isStopped = true;
             deathCue.Play(transform.position);
             GetComponent<Collider>().enabled = false;
-            //GameObject.Instantiate(rubisPrefab, transform.position, Quaternion.identity);
+            GameObject.Instantiate(reward, transform.position, Quaternion.identity);
             animator.Play("Die");
             transform.DOMoveY(-1.2f, 2f).SetDelay(5f).OnComplete(Destroy);
         }
@@ -164,12 +175,14 @@ namespace Magaa
 
         private void StartIdle()
         {
+            if (!enabled) return;
             agent.isStopped = false;
             isAttacking = false;
         }
 
         private void StartFire()
         {
+            if (!enabled) return;
             flameThrower.Play(true);
             startFlameThrower.Play(transform.position);
             StartCoroutine(FireRoutine(.2f));
@@ -190,6 +203,7 @@ namespace Magaa
 
         private void GroundSlam()
         {
+            if (!enabled) return;
             groundSlam.Play(true);
             Ray ray = new Ray(groundSlam.transform.position, groundSlam.transform.forward);
             RaycastHit[] hits = Physics.SphereCastAll(ray, groundSlamExplosionRange, groundSlamExplosionRange, attackMask, QueryTriggerInteraction.Ignore);
@@ -209,12 +223,14 @@ namespace Magaa
 
         private void Throw()
         {
+            if (!enabled) return;
             throwAttack.Play(true);
             throwCue.Play();
         }
 
         private void StartWarning()
         {
+            if (!enabled) return;
             throwAttackWarning.Play(true);
         }
 

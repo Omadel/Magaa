@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6de9aff41a33ee4090c29d5477bab87, type: 3}
+  m_Name: Shotgun
+  m_EditorClassIdentifier: 
+  fireRate: 1
+  bulletSpeed: 600
+  bulletDamage: 150
+  magazineCapacity: 12
+  ammoMesh: {fileID: 4300000, guid: 70fff6b6a7ad4eb4297625291a9cc997, type: 3}
+  prefab: {fileID: 5421756329569538715, guid: f73296e64fa45264d91c9dbe5e40f88d, type: 3}
+  reloadingDuration: 2
+  reloadClip: {fileID: 7400000, guid: cdec07a54b86114429322b77d54445b6, type: 2}
+  shootCue:
+    _Clips:
+    - {fileID: 8300000, guid: f32a3bb380d8c634fba46342bad94b4a, type: 3}
+    - {fileID: 8300000, guid: bc8d316edd6c23446ae9ac1cf5cc2d65, type: 3}
+    - {fileID: 8300000, guid: 7dac9ff25e3107b4799fe45fe04d02ec, type: 3}
+    - {fileID: 8300000, guid: 9b02184dddb68124b82ac90bf9bed5a3, type: 3}
+    - {fileID: 8300000, guid: d114421c343efdd49abab9e138c92eb3, type: 3}
+    _Parameters: {fileID: 11400000, guid: 11e9a71703bb8ea4196c7d9724a80c20, type: 2}
+  reloadCue:
+    _Clips:
+    - {fileID: 8300000, guid: 3db3984c33baaf241b93132226886985, type: 3}
+    - {fileID: 8300000, guid: 85d72d479c090a44fbaa66fcae8328db, type: 3}
+    - {fileID: 8300000, guid: e361abeee430c1c46be25a4fb540a25b, type: 3}
+    - {fileID: 8300000, guid: 291d10ac545fe6d4c8ac2597f1ef3280, type: 3}
+    - {fileID: 8300000, guid: e28f8cf6a87a4cd43ab1bf5418629448, type: 3}
+    - {fileID: 8300000, guid: 55eed022e6a67044682b87828589a56c, type: 3}
+    _Parameters: {fileID: 11400000, guid: 7f6c0d01e4d75db48a4457fd6b531050, type: 2}
+  magInCue:
+    _Clips:
+    - {fileID: 8300000, guid: 6d14e034f19bf9a4ba8ae067e6c88e28, type: 3}
+    - {fileID: 8300000, guid: 05f01c33837c76047a892517a65880f2, type: 3}
+    - {fileID: 8300000, guid: 45e30532d9822b94c9b0e120a188aaad, type: 3}
+    - {fileID: 8300000, guid: 5cf3af57e9e270546adc7c92b3ee8c79, type: 3}
+    _Parameters: {fileID: 11400000, guid: 7f6c0d01e4d75db48a4457fd6b531050, type: 2}
+  magOutCue:
+    _Clips:
+    - {fileID: 8300000, guid: 3030f89ae1f0adb4eb8f3d7f1f4c7e32, type: 3}
+    _Parameters: {fileID: 11400000, guid: 7f6c0d01e4d75db48a4457fd6b531050, type: 2}

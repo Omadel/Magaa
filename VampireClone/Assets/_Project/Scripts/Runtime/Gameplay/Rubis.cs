@@ -21,14 +21,14 @@ namespace Magaa
             transform.DOLocalRotate(new Vector3(0, 180, 0), idleDuration, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Incremental).SetEase(Ease.Linear).SetDelay(duration * Random.value);
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            isHarvested = true;
-            startPosition = transform.position;
-        }
-
         private void Update()
         {
+            if (!GameManager.Instance.enabled) return;
+            if (Vector3.Distance(transform.position, GameManager.Instance.Player.transform.position) < 3f && !isHarvested)
+            {
+                isHarvested = true;
+                startPosition = transform.position;
+            }
             if (!isHarvested) return;
             transform.DOKill();
             tweenValue += Time.deltaTime;

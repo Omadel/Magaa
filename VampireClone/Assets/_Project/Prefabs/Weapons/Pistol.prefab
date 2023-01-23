@@ -53,7 +53,8 @@ MonoBehaviour:
   - {fileID: 8478434632353287352}
   - {fileID: 8478146648445813266}
   shootTransform: {fileID: 8603962350573259898}
-  bulletSystem: {fileID: 8478237498074858816}
+  bulletSystems:
+  - {fileID: 8478237498074858816}
 --- !u!1001 &6958975083167964260
 PrefabInstance:
   m_ObjectHideFlags: 0

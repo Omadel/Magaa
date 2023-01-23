@@ -3,6 +3,8 @@ using Etienne;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using Range = Etienne.Range;
 
@@ -22,7 +24,7 @@ namespace Magaa
         [SerializeField, Tooltip("Time in minute")] private float totalGameTime = 15f;
         [SerializeField, ReadOnly] private string currentTimeFormatted;
         [SerializeField] private TMPro.TextMeshProUGUI timerTextMesh;
-        [SerializeField] GameObject helicopter;
+        [SerializeField] private GameObject helicopter;
 
         [Header("Levels")]
         [SerializeField] private AnimationCurve experienceCurve;
@@ -32,6 +34,13 @@ namespace Magaa
         [SerializeField, ReadOnly] private int experience;
         [SerializeField, ReadOnly] private int currentLevelGoal;
         [SerializeField] private GameObject upgrade;
+
+        [Header("ZombieCap")]
+        [SerializeField] private int maxZombies;
+        [SerializeField, ReadOnly] private int currentZombies;
+        [SerializeField] private TMPro.TextMeshProUGUI maxZombiesUGUI, currentZombiesUGUI;
+        [SerializeField] private Slider zombiesSlider;
+        [SerializeField] private GameObject nuclearExplosionPrefab;
 
         [Header("EnemyWaves")]
         [SerializeField] private Enemy enemyPrefab;
@@ -50,7 +59,10 @@ namespace Magaa
             public float WarningTime => (SpawnTime * 60f) - WarningSound.Clip.length;
             public float SpawnSoundTime => (SpawnTime * 60f) - SpawnSound.Clip.length;
             [Tooltip("In Minutes")] public float SpawnTime;
-            public GameObject Prefab;
+            public BruteBoss Prefab;
+            [Header("Stats")]
+            public int Health = 1000;
+            public Reward Reward;
             public Sound WarningSound;
             public Sound SpawnSound;
             [ReadOnly] public bool HasBeenAnounced = false;
@@ -91,6 +103,7 @@ namespace Magaa
             LevelUp(false);
             upgrade.SetActive(false);
             helicopter.SetActive(false);
+            maxZombiesUGUI.text = maxZombies.ToString();
         }
 
         private void Update()
@@ -118,7 +131,8 @@ namespace Magaa
 
                 Vector3 position = player.transform.position + GetRandomPositionInsindeRange();
                 Vector3 direction = player.transform.position - position;
-                GameObject.Instantiate(currentBoss.Prefab, position, Quaternion.LookRotation(RoundWorldDirection(direction)));
+                var boss = GameObject.Instantiate(currentBoss.Prefab, position, Quaternion.LookRotation(RoundWorldDirection(direction)));
+                boss.SetReward(currentBoss.Health, currentBoss.Reward);
             }
             if (currentTime >= totalGameTime * 60f)
             {
@@ -152,10 +166,11 @@ namespace Magaa
             do
             {
                 position = UnityEngine.Random.insideUnitCircle * enemySpawnRange.Max;
-
+                position.z = position.y;
+                position.y = 0f;
+                NavMesh.SamplePosition(position, out NavMeshHit hit, 10f, NavMesh.AllAreas);
+                position = hit.position;
             } while (position.magnitude < enemySpawnRange.Min);
-            position.z = position.y;
-            position.y = 0f;
             return position;
         }
 
@@ -195,8 +210,51 @@ namespace Magaa
 
         public void SetExperienceBar(ExperienceBar experienceBar) => this.experienceBar = experienceBar;
         public void SetPlayer(Player player) => this.player = player;
-        public void AddEnemy(Enemy enemy) => enemies.Add(enemy);
-        public void RemoveEnemy(Enemy enemy) => enemies.Remove(enemy);
+        public void AddEnemy(Enemy enemy)
+        {
+            enemies.Add(enemy);
+            currentZombies++;
+            UpdateZombiesUI();
+            CheckNuclear();
+        }
+
+        public void RemoveEnemy(Enemy enemy)
+        {
+            enemies.Remove(enemy);
+            currentZombies--;
+            UpdateZombiesUI();
+        }
+
+        private void CheckNuclear()
+        {
+            if (currentZombies != maxZombies) return;
+            player.Die();
+            GameObject.Instantiate(nuclearExplosionPrefab, player.transform.position, Quaternion.identity);
+            enabled = false;
+            BruteBoss[] bosses = GameObject.FindObjectsOfType<BruteBoss>();
+            lock (bosses)
+            {
+                int length = bosses.Length;
+                for (int i = length - 1; i >= 0; i--)
+                {
+                    bosses[i].Die();
+                }
+            }
+            lock (enemies)
+            {
+                int count = enemies.Count;
+                for (int i = count - 1; i >= 0; i--)
+                {
+                    enemies[i].Die();
+                }
+            }
+        }
+
+        private void UpdateZombiesUI()
+        {
+            currentZombiesUGUI.text = ((float)currentZombies).ToString();
+            zombiesSlider.value = currentZombies / (float)maxZombies;
+        }
 
         public void HarvestRubis(int value)
         {
@@ -207,6 +265,7 @@ namespace Magaa
 
         private void LevelUp(bool notify = true)
         {
+            if (!enabled) return;
             currentLevel++;
             currentLevelGoal = Mathf.RoundToInt(levelExperienceRange.Lerp(experienceCurve.Evaluate(levelRange.Normalize(currentLevel))));
             experienceBar.SetMax(currentLevelGoal);

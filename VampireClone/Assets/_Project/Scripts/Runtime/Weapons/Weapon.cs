@@ -13,8 +13,7 @@ namespace Magaa
         [SerializeField] private WeaponData data;
         [SerializeField] private ParticleSystem[] particleSystems;
         [SerializeField] private Transform shootTransform;
-        [SerializeField] private ParticleSystem bulletSystem;
-        private Bullet bullet;
+        [SerializeField] private ParticleSystem[] bulletSystems;
 
 
         public void StopShooting()
@@ -24,8 +23,12 @@ namespace Magaa
 
         private void Start()
         {
-            bullet = bulletSystem.gameObject.AddComponent<Bullet>();
-            bullet.SetDamage(data.BulletDamage);
+
+            foreach (ParticleSystem bulletSystem in bulletSystems)
+            {
+                Bullet bullet = bulletSystem.gameObject.AddComponent<Bullet>();
+                bullet.SetDamage(data.BulletDamage);
+            }
             StopShooting();
         }
 
@@ -43,11 +46,16 @@ namespace Magaa
                 particleSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
                 ParticleSystem.MainModule main = particleSystem.main;
                 main.duration = AttackDuration;
-                if (particleSystem == bulletSystem)
-                {
-                    ParticleSystem.MinMaxCurve startSpeed = main.startSpeed;
-                    startSpeed.constant = data.BulletSpeed;
-                }
+                particleSystem.Play(false);
+            }
+
+            foreach (ParticleSystem particleSystem in bulletSystems)
+            {
+                particleSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+                ParticleSystem.MainModule main = particleSystem.main;
+                main.duration = AttackDuration;
+                ParticleSystem.MinMaxCurve startSpeed = main.startSpeed;
+                startSpeed.constant = data.BulletSpeed;
                 particleSystem.Play(false);
             }
         }

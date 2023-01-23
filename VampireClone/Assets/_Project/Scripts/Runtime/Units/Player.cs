@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Etienne;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 namespace Magaa
@@ -11,11 +12,13 @@ namespace Magaa
 
         [Header("Stats")]
         [SerializeField] private float walkSpeed = 5f;
+        [SerializeField, ReadOnly] private float currentSpeed;
         [SerializeField] private int maxHealth = 100;
         [SerializeField, ReadOnly] private int currentHealth;
         [SerializeField] private Slider healthBar;
         [SerializeField, ReadOnly] private int currentAmmo;
         [SerializeField] private MagazineDisplay magazineDisplay;
+        [SerializeField] private LayerMask triggerMask;
 
         [Header("Weapon")]
         [SerializeField] private WeaponData startingWeapon;
@@ -27,7 +30,9 @@ namespace Magaa
         [SerializeField, ReadOnly] private Material playerMaterial;
         [SerializeField] private float hitDuration;
         [SerializeField, ColorUsage(false, true)] private Color hitColor = Color.white;
+
         private Tween hitTween;
+        private bool isImpared = false;
         private bool isShooting = false;
         private float attackSpeedMult = 1f;
         private float fireTimer;
@@ -47,13 +52,15 @@ namespace Magaa
             SetWeapon(startingWeapon);
             TORENAMESHITNAME();
             playerMaterial.SetColor("_EmissionColor", Color.black);
+            currentSpeed = walkSpeed;
         }
 
-        private void SetWeapon(WeaponData weapon)
+        public void SetWeapon(WeaponData weapon)
         {
             bool isStartingWeapon = weapon == startingWeapon;
             startingWeaponHolsterEmpty.SetActive(isStartingWeapon);
             startingWeaponHolsterFull.SetActive(!isStartingWeapon);
+            if (currentWeapon != null) GameObject.Destroy(currentWeapon.gameObject);
             currentWeapon = GameObject.Instantiate(weapon.Prefab, weaponRoot);
             magazineDisplay.SetMaxAmmo(currentWeapon.Data.MagazineCapacity, currentWeapon.Data.AmmoMesh);
             currentAmmo = currentWeapon.Data.MagazineCapacity;
@@ -78,16 +85,48 @@ namespace Magaa
             if (isMoving) Move();
         }
 
+        private void FixedUpdate()
+        {
+            bool wasImpared = isImpared;
+            isImpared = false;
+            Poison poison = null;
+            Collider[] collisions = Physics.OverlapSphere(transform.position, .5f, triggerMask, QueryTriggerInteraction.Collide);
+            foreach (Collider collision in collisions)
+            {
+                if (collision.TryGetComponent(out poison))
+                {
+                    isImpared = true;
+                    break;
+                }
+            }
+            if (!wasImpared && isImpared)
+            {
+                currentSpeed = walkSpeed * poison.ImparingForce;
+                if (isMoving) animator.Play("Walk Impared", 0);
+            }
+            if (wasImpared && !isImpared)
+            {
+                currentSpeed = walkSpeed;
+                if (isMoving) animator.Play("Walk", 0);
+            }
+        }
+
         private void Move()
         {
-            transform.position += Time.deltaTime * walkSpeed * transform.forward;
+            transform.position += Time.deltaTime * currentSpeed * transform.forward;
+            NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 10f, NavMesh.AllAreas);
+            transform.position = hit.position;
         }
 
         private void SetDirection(Vector2 uiDirection)
         {
             bool wasMoving = isMoving;
             isMoving = uiDirection.sqrMagnitude > .1f;
-            if (wasMoving != isMoving) animator.Play(isMoving ? "Walk" : "Idle", 0);
+            if (wasMoving != isMoving)
+            {
+                string walkingAnimationName = isImpared ? "Walk Impared" : "Walk";
+                animator.Play(isMoving ? walkingAnimationName : "Idle", 0);
+            }
             if (!isMoving) return;
 
             transform.forward = GameManager.Instance.RoundDirectionFromUIDirection(uiDirection);
@@ -129,7 +168,7 @@ namespace Magaa
         {
             GameManager.Instance.UnPauseGame();
             attackSpeedMult += .1f;
-            currentWeapon.StartShooting(attackSpeedMult);
+            SetWeapon(currentWeapon.Data);
             float shootingAnimationSpeed = 1 / currentWeapon.AttackDuration;
             animator.SetFloat("ShootingSpeed", Mathf.Max(1f, shootingAnimationSpeed));
         }
@@ -139,7 +178,7 @@ namespace Magaa
             if (!enabled) return;
             hitTween?.Complete();
             hitTween = DOTween.To(() => playerMaterial.GetColor("_EmissionColor"), x => playerMaterial.SetColor("_EmissionColor", x), hitColor, hitDuration).SetLoops(2, LoopType.Yoyo);
-            Vibration.Vibrate(Mathf.RoundToInt(1000*hitDuration));
+            Vibration.Vibrate(Mathf.RoundToInt(1000 * hitDuration));
             SetHealth(currentHealth - damage);
         }
 
@@ -150,9 +189,10 @@ namespace Magaa
             if (currentHealth <= 0) Die();
         }
 
-        private void Die()
+        public void Die()
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            enabled = false;
+            Camera.main.DOOrthoSize(70, 5f).SetEase(Ease.OutQuart).OnComplete(() => UnityEngine.SceneManagement.SceneManager.LoadScene(0));
         }
 
         private void OnParticleCollision(GameObject other)

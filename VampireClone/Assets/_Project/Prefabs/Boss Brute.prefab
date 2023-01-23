@@ -38509,10 +38509,11 @@ MonoBehaviour:
   hitPrefab: {fileID: 198355779183106702, guid: 3b517eddec185dd4a830743a742ad00b,
     type: 3}
   currentHealth: 0
-  updateRate: 1
+  updateRate: 5
   attackMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 183
+  reward: {fileID: 8146070516504162734, guid: ef56625aa953d8440915442108d9dbc7, type: 3}
   flameThrower: {fileID: 2398593380563829154}
   flameThrowerRange:
     Min: 0
@@ -40592,7 +40593,7 @@ PrefabInstance:
     - target: {fileID: 198015459346078236, guid: d9c1fac1f620ebd4f9e47ef7b9ca6bca,
         type: 3}
       propertyPath: CollisionModule.collidesWith.m_Bits
-      value: 55
+      value: 183
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9c1fac1f620ebd4f9e47ef7b9ca6bca, type: 3}

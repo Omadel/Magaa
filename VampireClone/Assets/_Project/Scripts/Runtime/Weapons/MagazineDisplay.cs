@@ -36,12 +36,20 @@ namespace Magaa
                 ammo.GetComponent<MeshFilter>().mesh = ammoMesh;
                 ammoRenderers.Add(ammo);
             }
+            for (int i = 0; i < activeAmmoRenderers.Count; i++)
+            {
+                MeshRenderer ammo = ammoRenderers[i];
+                ammo.GetComponent<MeshFilter>().mesh = ammoMesh;
+            }
             for (int i = activeAmmoRenderers.Count; i < Mathf.Min(maxAmmo, ammoRenderers.Count); i++)
             {
                 MeshRenderer ammo = ammoRenderers[i];
                 ammo.gameObject.SetActive(true);
-                ammo.GetComponent<MeshFilter>().mesh = ammoMesh;
                 activeAmmoRenderers.Add(ammo);
+            }
+            for (int i = activeAmmoRenderers.Count - 1; i >= maxAmmo; i--)
+            {
+                activeAmmoRenderers.RemoveAt(i);
             }
             for (int i = maxAmmo; i < ammoRenderers.Count; i++)
             {
