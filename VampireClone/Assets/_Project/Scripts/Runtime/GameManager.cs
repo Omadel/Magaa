@@ -113,6 +113,17 @@ namespace Magaa
             currentTimeFormatted = $"{currentTimeSpan.Minutes:00}:{currentTimeSpan.Seconds:00}";
             timerTextMesh.text = currentTimeFormatted;
             HandleEnemySpawns();
+            HandleBosses();
+            if (currentTime >= totalGameTime * 60f)
+            {
+                helicopter.SetActive(true);
+                helicopter.transform.position = player.transform.position;
+                enabled = false;
+            }
+        }
+
+        private void HandleBosses()
+        {
             if (bossIndex >= bossSpawns.Length) return;
             BossSpawn currentBoss = bossSpawns[bossIndex];
             if (currentTime >= currentBoss.WarningTime && !currentBoss.HasBeenAnounced)
@@ -133,12 +144,6 @@ namespace Magaa
                 Vector3 direction = player.transform.position - position;
                 var boss = GameObject.Instantiate(currentBoss.Prefab, position, Quaternion.LookRotation(RoundWorldDirection(direction)));
                 boss.SetReward(currentBoss.Health, currentBoss.Reward);
-            }
-            if (currentTime >= totalGameTime * 60f)
-            {
-                helicopter.SetActive(true);
-                helicopter.transform.position = player.transform.position;
-                enabled = false;
             }
         }
 
@@ -258,6 +263,7 @@ namespace Magaa
 
         public void HarvestRubis(int value)
         {
+            if (!enabled) return;
             experience += value;
             experienceBar.SetValue(experience);
             if (experience >= currentLevelGoal) LevelUp();

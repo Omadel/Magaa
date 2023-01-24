@@ -15,25 +15,25 @@ namespace Magaa
         [SerializeField, ReadOnly] private float currentHealth;
         [SerializeField] private float updateRate = 1f;
         [SerializeField] private LayerMask attackMask;
-        [SerializeField]  Reward reward;
+        [SerializeField] private Reward reward;
         [Header("FlameThrower")]
         [SerializeField] private ParticleSystem flameThrower;
         [SerializeField, MinMaxRange(0f, 35f)] private Range flameThrowerRange = new Range(0, 2);
         [SerializeField] private int flameThrowerDamage = 10;
-        [SerializeField] Cue startFlameThrower, loopFlameThrower, stopFlamethrower;
+        [SerializeField] private Cue startFlameThrower, loopFlameThrower, stopFlamethrower;
         [Header("GroundSlam")]
         [SerializeField] private ParticleSystem groundSlam;
         [SerializeField, MinMaxRange(0f, 35f)] private Range groundSlamRange = new Range(9f, 11f);
         [SerializeField] private float groundSlamExplosionRange = 2f;
         [SerializeField] private int groundSlamDamage = 60;
-        [SerializeField]        Cue slamCue;
+        [SerializeField] private Cue slamCue;
         [Header("ThrowAttack")]
         [SerializeField] private ParticleSystem throwAttack;
         [SerializeField] private ParticleSystem throwAttackWarning;
         [SerializeField, MinMaxRange(0f, 35f)] private Range throwAttackRange = new Range(9f, 17f);
         [SerializeField] private float throwAttackExplosionRange = 2f;
         [SerializeField] private int throwAttackDamage = 50;
-        [SerializeField] Cue throwCue, throwCrashCue;
+        [SerializeField] private Cue throwCue, throwCrashCue;
         [Header("Audio")]
         [SerializeField] private Cue hitCue;
         [SerializeField] private Cue deathCue;
@@ -61,6 +61,7 @@ namespace Magaa
 
         private void Start()
         {
+            enabled = false;
             currentHealth = maxHealth;
             playerTransform = GameManager.Instance.Player.transform;
             transform.forward = GameManager.Instance.RoundWorldDirection(transform.Direction(playerTransform).normalized);
@@ -73,6 +74,10 @@ namespace Magaa
             agent.Warp(transform.position);
         }
 
+        private void StartBehaviour()
+        {
+            enabled = true;
+        }
 
         private void Update()
         {
@@ -87,6 +92,7 @@ namespace Magaa
                 lastAttack = Attack.Throw;
                 isAttacking = true;
                 agent.isStopped = true;
+                agent.enabled = false;
                 animator.Play("Throw");
                 return;
             }
@@ -96,6 +102,7 @@ namespace Magaa
                 lastAttack = Attack.Slam;
                 isAttacking = true;
                 agent.isStopped = true;
+                agent.enabled = false;
                 animator.Play("Jump Attack");
                 return;
             }
@@ -105,6 +112,7 @@ namespace Magaa
                 lastAttack = Attack.FlameThrower;
                 isAttacking = true;
                 agent.isStopped = true;
+                agent.enabled = false;
                 animator.Play("Roar");
                 return;
             }
@@ -158,7 +166,7 @@ namespace Magaa
         public void Die()
         {
             enabled = false;
-            agent.isStopped = true;
+            agent.enabled = false;
             deathCue.Play(transform.position);
             GetComponent<Collider>().enabled = false;
             GameObject.Instantiate(reward, transform.position, Quaternion.identity);
@@ -176,8 +184,9 @@ namespace Magaa
         private void StartIdle()
         {
             if (!enabled) return;
-            agent.isStopped = false;
             isAttacking = false;
+            agent.enabled = true;
+            agent.isStopped = false;
         }
 
         private void StartFire()
@@ -187,8 +196,10 @@ namespace Magaa
             startFlameThrower.Play(transform.position);
             StartCoroutine(FireRoutine(.2f));
         }
-        AudioSource loopFlame;
-        IEnumerator FireRoutine(float delay)
+
+        private AudioSource loopFlame;
+
+        private IEnumerator FireRoutine(float delay)
         {
             yield return new WaitForSeconds(delay);
             loopFlame = AudioSourcePool.PlayLooped(loopFlameThrower);

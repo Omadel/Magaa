@@ -19,6 +19,7 @@ namespace Magaa
         [SerializeField, ReadOnly] private int currentAmmo;
         [SerializeField] private MagazineDisplay magazineDisplay;
         [SerializeField] private LayerMask triggerMask;
+        [SerializeField] private ParticleSystem healFX;
 
         [Header("Weapon")]
         [SerializeField] private WeaponData startingWeapon;
@@ -48,8 +49,15 @@ namespace Magaa
             animator = GetComponentInChildren<Animator>();
         }
 
+        public void Heal(int value)
+        {
+            healFX.Play(true);
+            SetHealth(currentHealth + value);
+        }
+
         private void Start()
         {
+            healFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             SetHealth(maxHealth);
             SetWeapon(startingWeapon);
             playerMaterial.SetColor("_EmissionColor", Color.black);
@@ -65,7 +73,7 @@ namespace Magaa
             currentWeapon = GameObject.Instantiate(weapon.Prefab, weaponRoot);
             magazineDisplay.SetMaxAmmo(currentWeapon.Data.MagazineCapacity, currentWeapon.Data.AmmoMesh);
             currentAmmo = currentWeapon.Data.MagazineCapacity;
-            isShooting = true; 
+            isShooting = true;
             fireTimer = 0;
             currentWeapon.StartShooting(attackSpeedMult);
             float reloadingSpeed = currentWeapon.Data.ReloadSpeed;
@@ -200,7 +208,7 @@ namespace Magaa
 
         private void SetHealth(int value)
         {
-            currentHealth = value;
+            currentHealth = Mathf.Min(maxHealth, value);
             healthBar.value = currentHealth / (float)maxHealth;
             if (currentHealth <= 0) Die();
         }

@@ -3,9 +3,10 @@ using UnityEngine;
 
 namespace Magaa
 {
-    public class Rubis : MonoBehaviour
+    public class HealthPack : MonoBehaviour
     {
-        [SerializeField] private int value = 1;
+        [SerializeField] private int value = 50;
+        [SerializeField] private float pickupRange = 3f;
         [Header("Idle")]
         [SerializeField, Min(.01f)] private float idleDuration = .8f;
         [Header("Tween")]
@@ -23,7 +24,7 @@ namespace Magaa
 
         private void Update()
         {
-            if (Vector3.Distance(transform.position, GameManager.Instance.Player.transform.position) < 3f && !isHarvested)
+            if (Vector3.Distance(transform.position, GameManager.Instance.Player.transform.position) < pickupRange && !isHarvested)
             {
                 isHarvested = true;
                 startPosition = transform.position;
@@ -41,7 +42,7 @@ namespace Magaa
 
         private void Harvest()
         {
-            GameManager.Instance.HarvestRubis(value);
+            GameManager.Instance.Player.Heal(value);
             GameObject.Destroy(gameObject);
         }
 
@@ -49,5 +50,11 @@ namespace Magaa
         {
             transform.DOKill();
         }
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            UnityEditor.Handles.DrawWireArc(transform.position, transform.up, transform.forward, 360f, pickupRange);
+        }
+#endif
     }
 }

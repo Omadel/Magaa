@@ -15,7 +15,7 @@ namespace Magaa
         [SerializeField] private float walkSpeed = .4f;
         [SerializeField] private float runSpeed = 3f;
         [SerializeField] private float updateRate = 1f;
-        [SerializeField] private Rubis rubisPrefab;
+        [SerializeField] private Pickup[] onDeathPickups;
         [SerializeField] private ParticleSystem hitPrefab;
         [SerializeField] private float attackRange = 1.5f;
         [Header("Puke")]
@@ -39,6 +39,13 @@ namespace Magaa
         private NavMeshAgent agent;
         private AudioSource warningSource;
 
+        [System.Serializable]
+        private struct Pickup
+        {
+            [Range(0f, 1f)] public float Chance;
+            public GameObject Prefab;
+        }
+
         private void Awake()
         {
             SkinnedMeshRenderer[] renderers = GetComponentsInChildren<SkinnedMeshRenderer>(true);
@@ -57,13 +64,13 @@ namespace Magaa
 
         private void Start()
         {
+            enabled = false;
             currentHealth = maxHealth;
             GameManager.Instance.AddEnemy(this);
             playerTransform = GameManager.Instance.Player.transform;
             transform.forward = GameManager.Instance.RoundWorldDirection(transform.Direction(playerTransform).normalized);
             animator = GetComponentInChildren<Animator>();
             animator.SetFloat("Posture", Random.value);
-            animator.CrossFadeInFixedTime("Walk", 0, 0, Random.value * animator.runtimeAnimatorController.animationClips[1].length);
             if (Random.value < spawnSoundChance) spawnCue.Play(transform.position);
             pukeThrower.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             pukingTimer = Random.value * pukingDelay;
@@ -101,11 +108,22 @@ namespace Magaa
                 }
             }
 
-            if (Vector3.Distance(transform.position, playerTransform.position) < attackRange)
+            if (!agent.isStopped)
             {
-                animator.SetBool("Walking", false);
-                agent.isStopped = true;
-                return;
+                if (Vector3.Distance(transform.position, playerTransform.position) < attackRange * .5f)
+                {
+                    animator.SetBool("Walking", false);
+                    agent.isStopped = true;
+                    return;
+                }
+            }
+            else
+            {
+                if (Vector3.Distance(transform.position, playerTransform.position) < attackRange)
+                {
+                    return;
+                }
+
             }
             agent.isStopped = false;
 
@@ -115,6 +133,11 @@ namespace Magaa
             updateTimer -= 1 / updateRate;
             agent.SetDestination(playerTransform.position);
             animator.transform.forward = GameManager.Instance.RoundWorldDirection(transform.Direction(playerTransform).normalized);
+        }
+
+        private void StartBehaviour()
+        {
+            enabled = true;
         }
 
         private void StartPuke()
@@ -152,7 +175,20 @@ namespace Magaa
             deathCue.Play(transform.position);
             if (warningSource != null) warningSource.Stop();
             GameManager.Instance.RemoveEnemy(this);
-            GameObject.Instantiate(rubisPrefab, transform.position, Quaternion.identity);
+            float random = Random.value;
+            GameObject prefab = null;
+            float totalChance = 0f;
+            for (int i = 0; i < onDeathPickups.Length; i++)
+            {
+                float chance = onDeathPickups[i].Chance + totalChance;
+                if (random <= chance)
+                {
+                    prefab = onDeathPickups[i].Prefab;
+                    break;
+                }
+                totalChance += onDeathPickups[i].Chance;
+            }
+            GameObject.Instantiate(prefab, transform.position, Quaternion.identity);
             GameObject.Destroy(gameObject);
         }
 

@@ -324,7 +324,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}
@@ -2400,7 +2399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPersistant: 0
   angleSteps: 22
-  totalGameTime: 10
+  totalGameTime: 6
   currentTimeFormatted: 
   timerTextMesh: {fileID: 327294721598534613}
   helicopter: {fileID: 3247245308077370774}
@@ -2462,11 +2461,11 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1.0000143
       value: 0.6544812
-      inSlope: -0.9431816
-      outSlope: -0.9431816
+      inSlope: -0.80007464
+      outSlope: -0.80007464
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.06303867
+      inWeight: 0.04583335
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -2477,20 +2476,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: 22.973047
-      outSlope: 22.973047
+      inSlope: 7.277629
+      outSlope: 7.277629
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.0375
+      outWeight: 0.058333334
     - serializedVersion: 3
       time: 1
-      value: 5
-      inSlope: 20.335546
-      outSlope: 20.335546
+      value: 3
+      inSlope: 4.669812
+      outSlope: 4.669812
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.041666687
+      inWeight: 0.06666666
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -2509,7 +2508,7 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 120
+      value: 75
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -2593,7 +2592,7 @@ MonoBehaviour:
       _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
     HasBeenAnounced: 0
     HasSpawnSounded: 0
-  - SpawnTime: 3
+  - SpawnTime: 2
     Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
     Health: 1500
     Reward: {fileID: 8146070516504162734, guid: ef56625aa953d8440915442108d9dbc7,
@@ -2606,9 +2605,9 @@ MonoBehaviour:
       _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
     HasBeenAnounced: 0
     HasSpawnSounded: 0
-  - SpawnTime: 3.5
+  - SpawnTime: 3
     Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2000
+    Health: 1500
     Reward: {fileID: 450768187312680632, guid: 60e03303370b10d41b1afba5a546a690, type: 3}
     WarningSound:
       _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
@@ -2620,7 +2619,7 @@ MonoBehaviour:
     HasSpawnSounded: 0
   - SpawnTime: 3.5
     Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2000
+    Health: 1500
     Reward: {fileID: 8146070516504162734, guid: ef56625aa953d8440915442108d9dbc7,
       type: 3}
     WarningSound:
@@ -2631,170 +2630,10 @@ MonoBehaviour:
       _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
     HasBeenAnounced: 0
     HasSpawnSounded: 0
-  - SpawnTime: 5
+  - SpawnTime: 4
     Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2000
+    Health: 1500
     Reward: {fileID: 450768187312680632, guid: 1f179f10530b0e24292c98702c419d4b, type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 5
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2000
-    Reward: {fileID: 8146070516504162734, guid: ef56625aa953d8440915442108d9dbc7,
-      type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 6
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 8146070516504162734, guid: ef56625aa953d8440915442108d9dbc7,
-      type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 6
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 450768187312680632, guid: 1f179f10530b0e24292c98702c419d4b, type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 6
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 8146070516504162734, guid: ef56625aa953d8440915442108d9dbc7,
-      type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 7
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 8146070516504162734, guid: ef56625aa953d8440915442108d9dbc7,
-      type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 8
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 450768187312680632, guid: 1f179f10530b0e24292c98702c419d4b, type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 9
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 450768187312680632, guid: 1f179f10530b0e24292c98702c419d4b, type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 9
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 450768187312680632, guid: 60e03303370b10d41b1afba5a546a690, type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 9
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 450768187312680632, guid: 60e03303370b10d41b1afba5a546a690, type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 9
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 450768187312680632, guid: 60e03303370b10d41b1afba5a546a690, type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 9
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 450768187312680632, guid: 1f179f10530b0e24292c98702c419d4b, type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 9
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 450768187312680632, guid: 60e03303370b10d41b1afba5a546a690, type: 3}
-    WarningSound:
-      _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    SpawnSound:
-      _Clip: {fileID: 8300000, guid: 3a4503185cd97c84a944c912a50d5a7d, type: 3}
-      _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
-    HasBeenAnounced: 0
-    HasSpawnSounded: 0
-  - SpawnTime: 9
-    Prefab: {fileID: 891939507, guid: fe26926bbbde7a44d97c4efe28d1ba77, type: 3}
-    Health: 2500
-    Reward: {fileID: 450768187312680632, guid: 60e03303370b10d41b1afba5a546a690, type: 3}
     WarningSound:
       _Clip: {fileID: 8300000, guid: 29138091daaa3fe4894ff78ff8fa4490, type: 3}
       _Parameters: {fileID: 11400000, guid: 611d8f347cb9c8e47bd0428b5f790636, type: 2}
@@ -3846,7 +3685,7 @@ AudioSource:
     type: 2}
   m_audioClip: {fileID: 8300000, guid: 83dbfa0a22f4a6948b79c435bef3a130, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.896
+  m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -3890,7 +3729,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.823
+      value: 0.426
       inSlope: 0
       outSlope: 0
       tangentMode: 0
