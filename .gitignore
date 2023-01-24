@@ -64,3 +64,5 @@ crashlytics-build.properties
 *.unitypackage.meta
 [Oo][Ll][Dd]/
 [Oo][Ll][Dd].meta
+*PluginMaster*
+VampireClone/ProjectSettings/PWBSettings.txt

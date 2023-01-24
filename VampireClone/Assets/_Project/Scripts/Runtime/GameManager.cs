@@ -140,9 +140,9 @@ namespace Magaa
             {
                 bossIndex++;
 
-                Vector3 position = player.transform.position + GetRandomPositionInsindeRange();
+                Vector3 position = GetRandomPositionInsindeRange(player.transform.position);
                 Vector3 direction = player.transform.position - position;
-                var boss = GameObject.Instantiate(currentBoss.Prefab, position, Quaternion.LookRotation(RoundWorldDirection(direction)));
+                BruteBoss boss = GameObject.Instantiate(currentBoss.Prefab, position, Quaternion.LookRotation(RoundWorldDirection(direction)));
                 boss.SetReward(currentBoss.Health, currentBoss.Reward);
             }
         }
@@ -155,7 +155,7 @@ namespace Magaa
             if (ennemyTime < spawnDelay) return;
             ennemyTime -= spawnDelay;
 
-            Vector3 position = player.transform.position + GetRandomPositionInsindeRange();
+            Vector3 position = GetRandomPositionInsindeRange(player.transform.position);
             Vector3 direction = player.transform.position - position;
             Enemy enemy = GameObject.Instantiate(enemyPrefab, position, Quaternion.LookRotation(RoundWorldDirection(direction)));
 
@@ -165,7 +165,7 @@ namespace Magaa
             enemy.SetStats(Mathf.RoundToInt(enemyHealth.Evaluate(curveValue)), Mathf.RoundToInt(enemyDamage.Evaluate(curveValue)), isRunning);
         }
 
-        private Vector3 GetRandomPositionInsindeRange()
+        private Vector3 GetRandomPositionInsindeRange(Vector3 origin)
         {
             Vector3 position;
             do
@@ -173,7 +173,7 @@ namespace Magaa
                 position = UnityEngine.Random.insideUnitCircle * enemySpawnRange.Max;
                 position.z = position.y;
                 position.y = 0f;
-                NavMesh.SamplePosition(position, out NavMeshHit hit, 10f, NavMesh.AllAreas);
+                NavMesh.SamplePosition(position + origin, out NavMeshHit hit, 10f, NavMesh.AllAreas);
                 position = hit.position;
             } while (position.magnitude < enemySpawnRange.Min);
             return position;

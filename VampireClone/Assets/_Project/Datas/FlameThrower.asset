@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6de9aff41a33ee4090c29d5477bab87, type: 3}
   m_Name: FlameThrower
   m_EditorClassIdentifier: 
-  fireRate: 0.5
+  fireRate: 0.01
   bulletSpeed: 1500
   bulletDamage: 5
   magazineCapacity: 2
