@@ -60,29 +60,34 @@ namespace Magaa
 
         public static void Vibrate()
         {
+#if !UNITY_WEBGL && !UNITY_STANDALONE_WIN
             if (isAndroid())
                 vibrator.Call("vibrate");
             else
                 Handheld.Vibrate();
-
+#endif
         }
 
 
         public static void Vibrate(long milliseconds)
         {
+#if !UNITY_WEBGL&& !UNITY_STANDALONE_WIN
             if (isAndroid())
                 vibrator.Call("vibrate", milliseconds);
             else
                 Handheld.Vibrate();
+#endif
             GamePadVibrator.Vibrate(400, 100, milliseconds * .001f);
         }
 
         public static void Vibrate(long[] pattern, int repeat)
         {
+#if !UNITY_WEBGL && !UNITY_STANDALONE_WIN
             if (isAndroid())
                 vibrator.Call("vibrate", pattern, repeat);
             else
                 Handheld.Vibrate();
+#endif 
         }
 
         public static bool HasVibrator()
